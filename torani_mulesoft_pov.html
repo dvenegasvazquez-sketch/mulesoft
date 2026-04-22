@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Torani — MuleSoft Expansion Point of Value</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.75; color: #1a1a1a; background: #f9f8f6; }
+  .page { max-width: 980px; margin: 0 auto; background: #fff; padding: 3rem 3.5rem 5rem; }
+
+  .pov-header { border-bottom: 2px solid #1a1a1a; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .pov-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #999; margin-bottom: 6px; }
+  .pov-title { font-size: 30px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .pov-subtitle { font-size: 15px; color: #555; margin-bottom: 1rem; }
+  .pov-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .pov-meta-item { font-size: 12px; color: #888; }
+  .pov-meta-item strong { color: #333; font-weight: 600; }
+
+  .section { margin-bottom: 3.5rem; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 4px; }
+  .section-title { font-size: 22px; font-weight: 600; color: #111; margin-bottom: 1.25rem; padding-bottom: 0.6rem; border-bottom: 1px solid #eae8e2; }
+
+  .prose p { margin: 0 0 1rem; font-size: 15px; color: #333; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .flag { border-radius: 6px; padding: 14px 18px; margin-top: 1.5rem; font-size: 13.5px; line-height: 1.65; }
+  .flag-warn { background: #FAEEDA; border-left: 4px solid #BA7517; color: #633806; }
+  .flag-danger { background: #FCEBEB; border-left: 4px solid #A32D2D; color: #501313; }
+  .flag-info { background: #E6F1FB; border-left: 4px solid #185FA5; color: #042C53; }
+  .flag-success { background: #EAF3DE; border-left: 4px solid #3B6D11; color: #173404; }
+  .flag strong { font-weight: 600; }
+
+  .go-live-banner { background: #EAF3DE; border: 1px solid #97C459; border-radius: 8px; padding: 14px 18px; margin-bottom: 2rem; font-size: 13.5px; color: #173404; line-height: 1.65; }
+  .go-live-banner strong { font-weight: 600; }
+
+  .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .pipeline-card { background: #f9f8f6; border: 1px solid #eae8e2; border-radius: 8px; padding: 12px 14px; }
+  .pipeline-card-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #aaa; margin-bottom: 4px; }
+  .pipeline-card-title { font-size: 13px; font-weight: 600; color: #111; margin-bottom: 2px; }
+  .pipeline-card-meta { font-size: 12px; color: #888; }
+  .pipeline-card-amount { font-size: 15px; font-weight: 700; color: #185FA5; margin-top: 4px; }
+
+  .timeline { display: flex; flex-direction: column; gap: 0; margin: 1.25rem 0 1.75rem; border-left: 2px solid #e0ddd6; padding-left: 20px; }
+  .tl-item { position: relative; padding-bottom: 1.25rem; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-dot { position: absolute; left: -26px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: #185FA5; border: 2px solid #fff; box-shadow: 0 0 0 2px #185FA5; }
+  .tl-dot-green { background: #3B6D11; box-shadow: 0 0 0 2px #3B6D11; }
+  .tl-date { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.06em; margin-bottom: 2px; }
+  .tl-title { font-size: 13.5px; font-weight: 600; color: #111; margin-bottom: 3px; }
+  .tl-body { font-size: 13px; color: #555; line-height: 1.6; }
+
+  .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(275px, 1fr)); gap: 12px; margin-bottom: 2rem; }
+  .pain-card { background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; }
+  .pain-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .pain-num { font-size: 11px; font-weight: 600; color: #bbb; letter-spacing: 0.06em; }
+  .badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 4px; }
+  .badge-critical { background: #FCEBEB; color: #501313; }
+  .badge-high { background: #FAEEDA; color: #633806; }
+  .badge-medium { background: #E6F1FB; color: #042C53; }
+  .pain-card-title { font-size: 13.5px; font-weight: 600; color: #111; margin-bottom: 6px; }
+  .pain-card-body { font-size: 13px; color: #555; line-height: 1.6; }
+
+  .tech-wrap { overflow-x: auto; margin-top: 1rem; }
+  .tech-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tech-table th { text-align: left; font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 10px; border-bottom: 1px solid #eae8e2; white-space: nowrap; }
+  .tech-table td { padding: 9px 10px; border-bottom: 1px solid #f4f2ee; color: #333; vertical-align: top; font-size: 13px; }
+  .tech-table tr:last-child td { border-bottom: none; }
+  .tech-table td:first-child { color: #888; font-weight: 500; white-space: nowrap; }
+
+  .uc-card { background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 14px; }
+  .uc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .uc-priority { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 4px; }
+  .p1 { background: #FCEBEB; color: #501313; }
+  .p2 { background: #FAEEDA; color: #633806; }
+  .p3 { background: #E6F1FB; color: #042C53; }
+  .uc-title { font-size: 15px; font-weight: 600; color: #111; }
+  .uc-category { font-size: 11px; color: #bbb; margin-left: auto; }
+  .uc-body { font-size: 13.5px; color: #444; line-height: 1.7; }
+  .uc-body p { margin: 0 0 10px; }
+  .uc-body p:last-child { margin-bottom: 0; }
+
+  .arch-layer { border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .arch-layer-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 3px; }
+  .arch-layer-sub { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+  .arch-systems { display: flex; flex-wrap: wrap; gap: 6px; }
+  .arch-chip { font-size: 12px; padding: 4px 11px; border-radius: 999px; background: #f4f2ee; border: 1px solid #e0ddd6; color: #555; }
+  .arch-chip-live { background: #EAF3DE; border-color: #97C459; color: #173404; font-weight: 600; }
+
+  .rev-wrap { overflow-x: auto; }
+  .rev-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 1rem; }
+  .rev-table th { text-align: left; font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 10px; border-bottom: 1px solid #eae8e2; }
+  .rev-table td { padding: 10px; border-bottom: 1px solid #f4f2ee; color: #333; vertical-align: top; font-size: 13px; }
+  .rev-table tr.total-row td { border-bottom: none; font-weight: 600; background: #f4f2ee; font-size: 13.5px; border-top: 1px solid #ddd; }
+  .rev-table tr.live-row td { background: #f4faf0; }
+  .status-pill { font-size: 11px; padding: 2px 9px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
+  .s-live { background: #EAF3DE; color: #173404; }
+  .s-pipeline { background: #E6F1FB; color: #042C53; }
+  .s-scoping { background: #FAEEDA; color: #633806; }
+  .s-eval { background: #f0ece6; color: #888; }
+  .s-roadmap { background: #f9f8f6; color: #aaa; border: 1px solid #eae8e2; }
+
+  .proof-card { border: 1px solid #eae8e2; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 14px; }
+  .proof-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #bbb; margin-bottom: 5px; }
+  .proof-title { font-size: 15px; font-weight: 600; color: #111; margin-bottom: 10px; }
+  .proof-body { font-size: 13.5px; color: #444; line-height: 1.7; }
+  .anchor-quote { border-left: 2px solid #ccc; padding: 6px 14px; margin-top: 14px; font-size: 13px; font-style: italic; color: #666; }
+
+  .contact-card { background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .contact-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .contact-avatar { width: 42px; height: 42px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #185FA5; flex-shrink: 0; }
+  .contact-avatar-green { background: #EAF3DE; color: #3B6D11; }
+  .contact-role-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 4px; background: #E6F1FB; color: #042C53; display: inline-block; margin-bottom: 3px; }
+  .contact-role-badge-green { background: #EAF3DE; color: #173404; }
+  .contact-name { font-size: 14px; font-weight: 600; color: #111; }
+  .contact-title-line { font-size: 12px; color: #888; }
+  .contact-body { font-size: 13px; color: #555; line-height: 1.65; margin-bottom: 10px; }
+  .contact-question { font-size: 13px; font-style: italic; color: #222; background: #f9f8f6; border-radius: 6px; padding: 10px 14px; border: 1px solid #eae8e2; }
+
+  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 1.5rem; }
+  .metric-card { background: #f4f2ee; border-radius: 8px; padding: 12px 14px; }
+  .metric-label { font-size: 10px; color: #aaa; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .metric-value { font-size: 13px; font-weight: 600; color: #222; }
+
+  .step-list { display: flex; flex-direction: column; gap: 10px; }
+  .step-item { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; }
+  .step-num { width: 30px; height: 30px; border-radius: 50%; background: #E6F1FB; color: #185FA5; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 4px; }
+  .step-body { font-size: 13px; color: #555; line-height: 1.65; }
+
+  .divider { height: 1px; background: #eae8e2; margin: 3rem 0; }
+  .stack-label { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; margin-top: 1.5rem; display: block; }
+
+  @media print {
+    body { background: #fff; }
+    .page { padding: 2rem 2.5rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="pov-header">
+    <div class="pov-eyebrow">Point of Value — MuleSoft Expansion</div>
+    <div class="pov-title">Torani</div>
+    <div class="pov-subtitle">Flavored Syrup Manufacturing / B2B Foodservice + Retail CPG · Existing MuleSoft Customer</div>
+    <div class="pov-meta">
+      <div class="pov-meta-item"><strong>Status:</strong> Existing Customer — Expanding</div>
+      <div class="pov-meta-item"><strong>Salesforce:</strong> Multi-cloud customer</div>
+      <div class="pov-meta-item"><strong>Ownership:</strong> Employee-owned (B-Corp)</div>
+      <div class="pov-meta-item"><strong>HQ:</strong> San Leandro, CA</div>
+      <div class="pov-meta-item"><strong>Revenue:</strong> ~$500M · Target $1B by 2030</div>
+      <div class="pov-meta-item"><strong>Prepared:</strong> April 2026</div>
+    </div>
+  </div>
+
+  <!-- GO-LIVE BANNER -->
+  <div class="go-live-banner">
+    <strong>MuleSoft Go-Live: May 6, 2026 — 14 days out.</strong> Torani's Phase 1 MuleSoft integration — replacing legacy SFTP-based file integrations with real-time API connectivity — goes live in two weeks. The account team has a celebration dinner scheduled with the IT team. This is the highest-leverage commercial moment in the account: the go-live creates a natural conversation about what comes next on the 3–5 year modernization roadmap Danielle (Head of IT) was hired to execute. This document frames that expansion story.
+  </div>
+
+  <!-- OPEN PIPELINE SNAPSHOT -->
+  <div class="stack-label" style="margin-top: 0; margin-bottom: 10px;">FY27 Open Pipeline Snapshot</div>
+  <div class="pipeline-grid">
+    <div class="pipeline-card">
+      <div class="pipeline-card-label">Service Cloud Add-On</div>
+      <div class="pipeline-card-title">+15 Service Cloud Licenses</div>
+      <div class="pipeline-card-meta">Closing May 2026</div>
+      <div class="pipeline-card-amount">~$34K</div>
+    </div>
+    <div class="pipeline-card">
+      <div class="pipeline-card-label">ITSM / Jira Replacement</div>
+      <div class="pipeline-card-title">Salesforce ITSM New Business</div>
+      <div class="pipeline-card-meta">Closing July 2026 · Led by Paul Lim</div>
+      <div class="pipeline-card-amount">~$48K</div>
+    </div>
+    <div class="pipeline-card">
+      <div class="pipeline-card-label">Slack Expansion</div>
+      <div class="pipeline-card-title">Aspirational Slack Growth</div>
+      <div class="pipeline-card-meta">Closing Sept 2026</div>
+      <div class="pipeline-card-amount">~$18K</div>
+    </div>
+    <div class="pipeline-card">
+      <div class="pipeline-card-label">MuleSoft Renewal</div>
+      <div class="pipeline-card-title">Phase 1 Renewal</div>
+      <div class="pipeline-card-meta">Closing Dec 2026</div>
+      <div class="pipeline-card-amount">~$23K</div>
+    </div>
+  </div>
+
+  <!-- SECTION 01 -->
+  <div class="section">
+    <div class="section-label">Section 01</div>
+    <div class="section-title">Current Situation</div>
+
+    <div class="stack-label" style="margin-top: 0; margin-bottom: 10px;">Account Engagement Timeline</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">October 31, 2025</div>
+        <div class="tl-title">Tableau Audit Completed</div>
+        <div class="tl-body">31 stakeholder interviews, 262 workbooks reviewed. 66% of dashboards obsolete, only 35 critical, ~30% of licenses inactive. Strategic optimization review engaged.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">November 4–5, 2025</div>
+        <div class="tl-title">MuleSoft Strategic Innovation Council + Kickoff</div>
+        <div class="tl-body">Half-day SIC session on IT architecture, MuleSoft integration, and Data Cloud strategy. Formal MuleSoft Deployment Assessment Review and Kickoff on 11/5.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">December 18, 2025</div>
+        <div class="tl-title">MuleSoft Deal Signed + ITSM Evaluation Initiated</div>
+        <div class="tl-body">MuleSoft integration proposal selected — replacing SFTP-based file integrations with real-time API connectivity as part of 3–5 year enterprise data strategy. Simultaneously, ITSM evaluation (Jira replacement) initiated by Paul Lim.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">January 2026</div>
+        <div class="tl-title">Danielle Joins as Head of IT</div>
+        <div class="tl-body">New IT leadership hired with explicit focus on real-time integrations and a 3–5 year modernization vision for Torani's disparate tech stack. A strategic architecture ally for MuleSoft expansion.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">April 16, 2026</div>
+        <div class="tl-title">TPM / Trade Spend POV Developed</div>
+        <div class="tl-body">Trade Promotion Management opportunity identified targeting Finance, Retail Sales, and Demand Planning — aligned to Torani's $1B by 2030 revenue target and 20% CAGR trajectory.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-green"></div>
+        <div class="tl-date">May 6, 2026 — Upcoming</div>
+        <div class="tl-title">MuleSoft Phase 1 Go-Live</div>
+        <div class="tl-body">SFTP replacement integration goes live. Celebration dinner with IT team planned. This is the expansion conversation entry point.</div>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>Torani is the category-defining brand in flavored syrups — a 100-year-old, employee-owned, B-Corp certified company that created the flavored latte category, holds the dominant share position with independent coffee shops nationwide, and is executing an aggressive growth strategy targeting $1 billion in revenue by 2030 on the back of a 20%+ CAGR it has sustained for over three decades. The business operates as a genuine two-sided market: a B2B foodservice channel serving coffee shops, restaurants, and QSR chains through a complex distributor network, and a direct-to-consumer retail channel through grocery and Amazon. The San Leandro Flavor Factory — a 327,000-square-foot manufacturing facility and brand experience destination — anchors the physical operations, and a 400+ SKU flavor portfolio with an annual "Flavor of the Year" innovation cadence keeps the brand culturally relevant across both channels. At ~$500M in current revenue, doubling to $1B by 2030 requires Torani to scale its commercial and operational infrastructure at a pace that its current disparate tech stack was not built to support.</p>
+      <p>The technology story at Torani has been moving fast since late 2025. The October Tableau audit revealed the extent of the data infrastructure problem — 66% of dashboards obsolete, 30% of analytics licenses idle, meaningful analytics investment producing minimal actionable output. The November Strategic Innovation Council session scoped the MuleSoft and Data Cloud strategy. The December deal closed on MuleSoft Phase 1, explicitly framed as part of a 3–5 year enterprise data strategy. January brought Danielle in as the new Head of IT with a stated mandate for real-time integrations and tech stack modernization. The April TPM opportunity signals that commercial functions — Finance, Retail Sales, Demand Planning — are beginning to articulate specific data and workflow needs that the current stack cannot serve. And on May 6, MuleSoft Phase 1 goes live, replacing SFTP-based file integrations with real-time API connectivity. This is a company whose technology leadership has committed to a modernization trajectory and is executing against it — Phase 1 is proof, and the account team's job at the go-live dinner is to frame what Phase 2 and beyond look like.</p>
+      <p>The expansion opportunity at Torani is not speculative — it is the logical continuation of a roadmap Danielle was hired to execute and that the SIC session in November scoped in broad strokes. The 3–5 year modernization vision means Phase 1's SFTP replacement is the foundation, not the destination. Torani operates a complex commercial architecture — two-sided channel (foodservice B2B + retail DTC), a TPM and trade spend function serving retail, a demand planning function that needs real-time sell-through signals, a customer service function being expanded through Service Cloud, and an IT infrastructure team evaluating ITSM modernization. Each of these functions represents a distinct integration surface that Phase 1's foundation enables. The account team's goal for the post-go-live engagement is to connect Torani's stated $1B revenue ambition to the specific integration investments that make it achievable — and to anchor that roadmap to the Data Cloud and Tableau optimization threads that are also active in the account.</p>
+    </div>
+
+    <div class="flag flag-success">
+      <strong>Expansion Framing — The Go-Live Is the Starting Line, Not the Finish:</strong> Torani purchased MuleSoft Phase 1 as the first step in a 3–5 year enterprise data strategy — this is documented in the December deal notes. Danielle was hired to execute that strategy. The go-live dinner on May 6 is not a project completion celebration; it is the account team's best opportunity of the year to reframe the relationship from "implementation vendor" to "strategic platform partner." Every conversation after May 6 should be anchored to the 3–5 year roadmap and Torani's $1B revenue target — not to the Phase 1 scope.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 02 -->
+  <div class="section">
+    <div class="section-label">Section 02</div>
+    <div class="section-title">Pain Points</div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 01</span><span class="badge badge-critical">Critical</span></div>
+        <div class="pain-card-title">Two-Channel Commerce Creates Two Separate Data Worlds with No Unified View</div>
+        <div class="pain-card-body">Torani's foodservice B2B channel and retail DTC channel almost certainly operate through separate order management, distributor data, and customer systems — making it impossible to see the full picture of a brand like Starbucks or a regional coffee chain that buys through both channels. As Torani scales toward $1B, the ability to manage cross-channel account relationships, allocate trade spend across channels, and forecast demand accurately requires a unified commerce data layer that Phase 1's SFTP replacement begins building but does not complete.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 02</span><span class="badge badge-critical">Critical</span></div>
+        <div class="pain-card-title">Tableau Audit Revealed an Analytics Layer Built on Stale, Incomplete Data</div>
+        <div class="pain-card-body">66% of Torani's Tableau dashboards were found to be obsolete and only 35 were classified as critical — a finding that is primarily an integration problem, not a Tableau problem. Dashboards go stale when the data feeding them is delayed, incomplete, or manually maintained. Phase 1's real-time API connectivity begins addressing feed latency, but the broader analytics layer will remain fragile until the full range of operational data sources — ERP, distributor feeds, demand planning, trade spend — are connected through a governed API layer rather than ad hoc SFTP processes.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 03</span><span class="badge badge-high">High</span></div>
+        <div class="pain-card-title">Trade Promotion Management Has No Integrated Data Foundation</div>
+        <div class="pain-card-body">The April TPM POV identified Finance, Retail Sales, and Demand Planning as the target functions for trade spend management — but TPM effectiveness depends on real-time sell-through data from retail partners, accrual data from the ERP, and promotional response data from distributor feeds. Without an integration layer connecting these sources to the TPM platform, trade spend decisions will be made on lagged or incomplete data — a material risk for a company targeting 20%+ CAGR where promotional ROI discipline is existential.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 04</span><span class="badge badge-high">High</span></div>
+        <div class="pain-card-title">Distributor Network Data Is a Black Box Limiting Demand Sensing</div>
+        <div class="pain-card-body">Torani's foodservice channel runs through a distributor network whose sell-through and inventory data flows back to Torani on a lag — often through the same SFTP processes Phase 1 is replacing. Real-time distributor POS and inventory data is the demand signal that drives accurate production planning, flavor mix decisions, and new SKU prioritization at the Flavor Factory. Without it, demand planning runs on delayed signals and the Flavor Factory's 400+ SKU production schedule is managed reactively.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 05</span><span class="badge badge-high">High</span></div>
+        <div class="pain-card-title">Service Cloud Expansion Requires Integrated Order and Account Data to Deliver Value</div>
+        <div class="pain-card-body">The +15 Service Cloud licenses closing in May represent a customer service investment that will underperform if Torani's service agents lack integrated order history, distributor account data, and real-time fulfillment visibility. The Service Cloud gap is the same data completeness problem that affects every Salesforce investment at a company with a disconnected ERP — without MuleSoft connecting the order and account data, Service Cloud agents handle inquiries with an incomplete picture of the customer relationship.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 06</span><span class="badge badge-medium">Medium</span></div>
+        <div class="pain-card-title">Flavor Innovation Data Is Not Flowing to Commercial Decision-Making</div>
+        <div class="pain-card-body">Torani's annual Flavor of the Year innovation process combines food scientist input, café customer research, and cultural trend analysis — a rich data process that produces product decisions largely disconnected from the commercial performance signals that should inform which new flavors get distribution investment. Without an integration layer connecting new SKU sell-through data, café customer response rates, and retail scan data back to the innovation and demand planning functions, flavor investment decisions rely on intuition where data could be decisive.</div>
+      </div>
+    </div>
+
+    <span class="stack-label">Known Technology Stack — Integration Status Post Phase 1</span>
+    <div class="tech-wrap">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>System / Platform</th>
+            <th>Status Post Phase 1</th>
+            <th>Expansion Opportunity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Integration Platform</td><td>MuleSoft Anypoint Platform</td><td>✓ Live May 6 — SFTP replacement scope</td><td>Expand to full API-led connectivity across all data sources</td></tr>
+          <tr><td>CRM</td><td>Salesforce (Sales Cloud, Service Cloud)</td><td>Active — Service Cloud expanding May 2026</td><td>ERP + distributor data enrichment; TPM integration; order history in Service Cloud</td></tr>
+          <tr><td>Analytics</td><td>Tableau + Salesforce Analytics Cloud</td><td>Active — post-audit optimization underway</td><td>Real-time data feeds replacing stale SFTP sources; governed API layer for dashboard reliability</td></tr>
+          <tr><td>ERP</td><td>ERP system (vendor TBD)</td><td>⚠ Phase 1 scope — confirm coverage depth</td><td>Full order, billing, and inventory API exposure to Salesforce and Tableau</td></tr>
+          <tr><td>Trade Promotion Mgmt</td><td>TPM platform (evaluation underway)</td><td>⛔ No integration architecture defined</td><td>MuleSoft as the data layer connecting ERP accruals, retail scan data, and distributor feeds to TPM</td></tr>
+          <tr><td>Distributor / EDI Feeds</td><td>Distributor POS and inventory feeds (SFTP-based)</td><td>⚠ Phase 1 replacing SFTP — full coverage TBD</td><td>Real-time distributor data API for demand planning and trade spend analytics</td></tr>
+          <tr><td>Retail / DTC Commerce</td><td>E-commerce / Amazon / Grocery retail feeds</td><td>⚠ Retail channel data integration status TBD</td><td>Retail sell-through API; unified cross-channel commerce view</td></tr>
+          <tr><td>Demand Planning</td><td>Demand planning system (vendor TBD)</td><td>⚠ Likely receiving lagged data from SFTP feeds</td><td>Real-time demand signal API; Flavor Factory production planning accuracy</td></tr>
+          <tr><td>ITSM</td><td>Jira → Salesforce ITSM (evaluation)</td><td>Evaluation active — Paul Lim lead</td><td>MuleSoft as integration layer for ITSM-to-operational system connections</td></tr>
+          <tr><td>Data Cloud</td><td>Salesforce Data Cloud (in strategy scope)</td><td>⚠ In 3–5 year roadmap — not yet deployed</td><td>MuleSoft as the integration foundation that feeds Data Cloud's unified data model</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 03 -->
+  <div class="section">
+    <div class="section-label">Section 03</div>
+    <div class="section-title">MuleSoft Expansion Use Cases</div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p1">P1</span>
+        <span class="uc-title">01 — TPM Data Foundation: Real-Time Trade Spend Intelligence</span>
+        <span class="uc-category">Finance &amp; Retail Commercial</span>
+      </div>
+      <div class="uc-body">
+        <p>The April TPM POV identified Finance, Retail Sales, and Demand Planning as the core functions driving the trade promotion management evaluation — and Torani's $1B revenue target requires those functions to make promotional investment decisions with the precision that scale demands. TPM platforms are only as effective as the data feeding them: retail sell-through rates, ERP accrual balances, distributor inventory positions, and promotional lift calculations must all be current and reliable for TPM to produce accurate ROI analysis. If Torani's TPM platform is connected to the same lagged SFTP data flows that Phase 1 is replacing, it will produce the same stale-data problem that afflicted 66% of the Tableau dashboards — but in a context where poor decisions cost margin at scale.</p>
+        <p>MuleSoft extends the Phase 1 integration foundation to connect the TPM platform directly to real-time data from retail scan feeds, ERP accrual systems, and distributor inventory APIs. A Process API normalizes promotional event data, accrual rates, and sell-through signals into the TPM platform's data model, enabling accurate pre-event planning, in-flight promotion monitoring, and post-event ROI reconciliation. The same API layer feeds Tableau and Data Cloud with the trade spend analytics that the Finance team needs for margin analysis and the Retail Sales team needs for account-level promotion planning.</p>
+        <p>For a company growing at 20%+ CAGR with an active retail expansion strategy, the ROI on trade spend accuracy compounds with revenue. A 1% improvement in promotional ROI across a $1B revenue base is $10M in margin impact. The TPM use case is the highest commercial-value expansion from Phase 1's foundation and the one most directly connected to Torani's stated growth ambition.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p1">P1</span>
+        <span class="uc-title">02 — Distributor Data API: Real-Time Demand Sensing for the Flavor Factory</span>
+        <span class="uc-category">Supply Chain &amp; Demand Planning</span>
+      </div>
+      <div class="uc-body">
+        <p>Torani's Flavor Factory in San Leandro is a 327,000-square-foot production operation managing 400+ SKUs across both foodservice and retail channels. The production planning decisions that drive that facility's efficiency — which flavors to run, at what volumes, and when — depend on demand signals from the distributor network that currently arrive through the SFTP file processes Phase 1 is replacing. Even after Phase 1's go-live, the depth of real-time distributor data integration may be limited to the specific sources scoped in the initial contract. The full demand sensing capability — real-time POS data from foodservice distributors, retail scan data from grocery partners, and inventory position data from the distributor network — requires a more comprehensive API layer than Phase 1 alone delivers.</p>
+        <p>MuleSoft builds a Distributor Data API layer that connects the full range of Torani's distribution partners — foodservice distributors, retail DSD partners, and e-commerce fulfillment providers — through a normalized demand signal feed. A Process API aggregates these signals into a demand planning data stream that feeds both the demand planning system and Salesforce's commercial view of account performance. Flavor Factory production scheduling becomes demand-driven rather than forecast-driven, reducing overstock on slow-moving SKUs and preventing stockouts on high-velocity flavors like Vanilla and Caramel.</p>
+        <p>The Flavor of the Year cadence makes demand sensing acutely important: every new flavor launch requires Torani to predict demand accurately enough to avoid both excess inventory and distribution gaps during the launch window. Real-time distributor data makes that prediction meaningful rather than speculative — and feeds the cultural trend analysis that drives the next year's flavor innovation decisions with actual sell-through performance data.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p1">P1</span>
+        <span class="uc-title">03 — Service Cloud Data Completeness: ERP and Order History Integration</span>
+        <span class="uc-category">Customer Service &amp; CRM</span>
+      </div>
+      <div class="uc-body">
+        <p>The +15 Service Cloud licenses closing in May represent Torani's investment in a customer service function that can serve its foodservice B2B accounts with the responsiveness that independent coffee shop and chain customers expect. But Service Cloud agents handling inquiries about order status, delivery timing, and account billing will face the same data completeness problem that affects every Service Cloud deployment without a connected ERP: the CRM has contact records and case history, but the operational data — order status, invoice history, shipment tracking, account credit standing — lives in the ERP and is not visible in Salesforce without an integration layer.</p>
+        <p>MuleSoft extends Phase 1's API foundation to connect Torani's ERP order and billing data to Service Cloud, surfacing real-time order status, invoice history, and account financial standing directly in the Service Cloud agent console. When a foodservice account manager from a regional coffee chain calls about a delayed shipment or a billing discrepancy, the agent sees the complete account picture — order history, open invoices, shipment status, and product mix — without leaving Salesforce. Agentforce (if Torani evaluates it in FY27-28) will depend on this same data completeness to automate routine service interactions.</p>
+        <p>The business outcome is a Service Cloud deployment that actually reduces handle time and improves first-call resolution from day one — rather than delivering a sophisticated UI with incomplete data behind it. For Torani's B2B foodservice customers, service quality is a retention lever, and a service organization that resolves inquiries without escalation builds the account loyalty that sustains the 20%+ CAGR growth trajectory.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p2">P2</span>
+        <span class="uc-title">04 — Tableau Data Foundation: Governed API Feeds Replacing Stale SFTP Sources</span>
+        <span class="uc-category">Analytics &amp; Data Modernization</span>
+      </div>
+      <div class="uc-body">
+        <p>The October Tableau audit's finding — 66% of dashboards obsolete, only 35 critical — is a data freshness and completeness problem more than it is a Tableau configuration problem. Dashboards built on SFTP-delivered data batches become stale the moment the batch cycle ends; dashboards built on manually-maintained data sources become obsolete the moment someone stops maintaining them. Phase 1's SFTP replacement begins addressing this for the specific sources in scope, but the full Tableau portfolio renewal requires a systematic replacement of all SFTP-based data feeds with governed, real-time MuleSoft API connections.</p>
+        <p>MuleSoft's expansion use case here is architectural: every Tableau dashboard identified as "critical" in the October audit should have its underlying data source migrated from SFTP batch feeds to MuleSoft API connections as part of a phased analytics modernization program. New dashboards built on the API layer are reliable by construction — the data is current, the feeds are monitored through Anypoint Platform's Runtime Manager, and failures are alertable rather than silent. This creates the analytics foundation that Tableau optimization requires and that Salesforce Analytics Cloud expansion will depend on as Torani moves toward Data Cloud deployment.</p>
+        <p>The outcome is a Tableau estate that performs — 35 critical dashboards rebuilt on reliable real-time data, the remaining 227 obsolete workbooks retired rather than maintained, and new dashboard development governed by an API-first data sourcing standard that prevents the stale-data problem from recurring as Torani's analytics needs grow toward the $1B scale.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p3">P3</span>
+        <span class="uc-title">05 — Data Cloud Foundation: MuleSoft as the Unified Data Ingestion Layer</span>
+        <span class="uc-category">Data Cloud &amp; Enterprise Strategy</span>
+      </div>
+      <div class="uc-body">
+        <p>Salesforce Data Cloud appeared in Torani's November SIC session as part of the 3–5 year enterprise data strategy. Data Cloud's value proposition — a unified customer data platform that enables AI-powered personalization, cross-channel identity resolution, and real-time segmentation — depends entirely on the quality and completeness of the data ingested into it. For Torani, that means unified profiles for its foodservice accounts that span order history, service interactions, promotional response, and product mix — data that currently lives across the ERP, Service Cloud, distributor feeds, and retail scan data in separate, unconnected systems.</p>
+        <p>MuleSoft is the correct and recommended data ingestion layer for Salesforce Data Cloud — a positioning Salesforce itself endorses. The API-led connectivity architecture established in Phase 1 and expanded through Phases 2 and 3 creates the normalized, governed data streams that Data Cloud requires for its unified profile model to be accurate and actionable. Building the Data Cloud architecture on MuleSoft-governed APIs rather than direct connectors means that when Torani's data sources change — a new distributor partner, an ERP upgrade, a new retail channel — the Data Cloud model is protected at the API boundary.</p>
+        <p>The business outcome is a Data Cloud deployment that, when Torani is ready to activate it, actually delivers the AI-driven commercial personalization and demand forecasting capabilities the investment promises — because the data foundation was built correctly from the start. Danielle's 3–5 year modernization vision ends with Data Cloud as the intelligence layer; MuleSoft is the infrastructure that makes that destination reachable.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 04 -->
+  <div class="section">
+    <div class="section-label">Section 04</div>
+    <div class="section-title">Solution Architecture</div>
+    <div class="prose" style="margin-bottom: 1.25rem;">
+      <p>Torani's target architecture — the endpoint of Danielle's 3–5 year modernization vision — is a fully API-governed data platform where every operational system (ERP, distributor network, retail channels, demand planning, the Flavor Factory's production systems) connects to every consuming surface (Salesforce, Tableau, Data Cloud, TPM) through MuleSoft's normalized API layer rather than SFTP batch processes or point-to-point custom connections. Phase 1 establishes the foundation. Each subsequent phase adds System APIs, Process APIs, and Experience APIs that extend the platform's data coverage until Torani's $1B commercial operation is running on real-time intelligence across every function.</p>
+    </div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-title">System APIs — Operational Data Sources</div>
+      <div class="arch-layer-sub">Each backend wrapped in a reusable API; SFTP replacements live May 6; additional sources added per phase</div>
+      <div class="arch-systems">
+        <span class="arch-chip arch-chip-live">SFTP Replacement Sources (Phase 1 — Live May 6)</span>
+        <span class="arch-chip">ERP (orders, billing, inventory, accruals)</span>
+        <span class="arch-chip">Distributor POS &amp; Inventory Feeds</span>
+        <span class="arch-chip">Retail Scan Data (grocery + Amazon)</span>
+        <span class="arch-chip">TPM Platform (trade event and accrual data)</span>
+        <span class="arch-chip">Demand Planning System</span>
+        <span class="arch-chip">Flavor Factory Production Systems</span>
+        <span class="arch-chip">ITSM (post-Jira replacement)</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">Process APIs — Business Logic &amp; Data Assembly</div>
+      <div class="arch-layer-sub">Cross-source normalization; demand signal aggregation; trade spend ROI calculation; unified account assembly</div>
+      <div class="arch-systems">
+        <span class="arch-chip">Unified Foodservice Account Assembler</span>
+        <span class="arch-chip">TPM Accrual &amp; Lift Calculator</span>
+        <span class="arch-chip">Real-Time Demand Signal Aggregator</span>
+        <span class="arch-chip">Cross-Channel Commerce Normalizer</span>
+        <span class="arch-chip">Tableau Data Feed Governor</span>
+        <span class="arch-chip">Data Cloud Ingestion Orchestrator</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">Experience APIs — Consumer Layer</div>
+      <div class="arch-layer-sub">Right data to the right surface — Salesforce, Tableau, Data Cloud, TPM platform, demand planning</div>
+      <div class="arch-systems">
+        <span class="arch-chip">Salesforce Service Cloud Order &amp; Account Feed</span>
+        <span class="arch-chip">Tableau Real-Time Dashboard API</span>
+        <span class="arch-chip">Data Cloud Unified Profile Ingestion API</span>
+        <span class="arch-chip">TPM Platform Data Feed</span>
+        <span class="arch-chip">Demand Planning Signal API</span>
+        <span class="arch-chip">Salesforce Analytics Cloud Commodity Feed</span>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top: 1.25rem;">
+      <p>Anypoint Platform capabilities most relevant to Torani's expansion include: Runtime Manager for monitoring the growing API estate as new integrations go live across foodservice, retail, and production systems; API Manager for governing the data feeds that serve Tableau and Data Cloud, ensuring that analytics consumers always receive current, validated data rather than silent feed failures; DataGraph for composing unified account queries that span the ERP, distributor, and Service Cloud data domains without requiring per-query integration builds; and the MuleSoft Accelerator for Consumer Goods, which provides pre-built templates for distributor POS integration, retail scan data normalization, and trade promotion data flows that are directly applicable to Torani's expansion use cases.</p>
+    </div>
+
+    <div class="flag flag-info">
+      <strong>Architecture Note:</strong> The architectural thread connecting all five expansion use cases is data freshness. Torani's Tableau audit, its TPM evaluation, its distributor demand sensing problem, and its Data Cloud ambition all share the same root cause: operational data that reaches the decision layer too late, through too many manual steps, to drive accurate commercial decisions. MuleSoft Phase 1 establishes real-time API connectivity for the initial SFTP sources. Every subsequent phase extends that real-time data coverage to another part of Torani's commercial operation. The 3–5 year vision Danielle was hired to execute is, architecturally, a phased migration from a batch-driven data operation to a real-time API-governed platform — and MuleSoft is the platform that executes that migration one phase at a time.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 05 -->
+  <div class="section">
+    <div class="section-label">Section 05</div>
+    <div class="section-title">Revenue Model</div>
+    <div class="rev-wrap">
+      <table class="rev-table">
+        <thead>
+          <tr>
+            <th style="width:30%">Initiative</th>
+            <th style="width:13%">Status</th>
+            <th style="width:33%">MuleSoft Role</th>
+            <th style="width:24%">ARR Range</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="live-row">
+            <td>Phase 1 — SFTP Replacement (Live May 6)</td>
+            <td><span class="status-pill s-live">Live May 6</span></td>
+            <td>Real-time API connectivity replacing legacy SFTP file integrations; enterprise data strategy foundation</td>
+            <td>$23K (renewal Dec 2026)</td>
+          </tr>
+          <tr>
+            <td>TPM Data Foundation (Phase 2A)</td>
+            <td><span class="status-pill s-pipeline">In Pipeline</span></td>
+            <td>ERP accrual API; retail scan data feed; distributor inventory signal for TPM platform</td>
+            <td>$80K – $120K</td>
+          </tr>
+          <tr>
+            <td>Service Cloud ERP Integration (Phase 2B)</td>
+            <td><span class="status-pill s-pipeline">In Pipeline</span></td>
+            <td>Order history and billing System API; real-time account data enrichment in Service Cloud</td>
+            <td>$60K – $90K</td>
+          </tr>
+          <tr>
+            <td>Distributor Demand Sensing API (Phase 2C)</td>
+            <td><span class="status-pill s-scoping">Scoping</span></td>
+            <td>Full distributor POS and inventory API layer; demand signal aggregation for Flavor Factory production planning</td>
+            <td>$80K – $110K</td>
+          </tr>
+          <tr>
+            <td>Tableau Analytics Data Modernization (Phase 3A)</td>
+            <td><span class="status-pill s-scoping">Scoping</span></td>
+            <td>Critical dashboard data source migration from SFTP to governed MuleSoft APIs; Tableau estate reliability program</td>
+            <td>$50K – $80K</td>
+          </tr>
+          <tr>
+            <td>Data Cloud Ingestion Foundation (Phase 3B)</td>
+            <td><span class="status-pill s-eval">Evaluating</span></td>
+            <td>Unified profile ingestion APIs; cross-channel identity data normalization; Data Cloud-ready data architecture</td>
+            <td>$100K – $140K</td>
+          </tr>
+          <tr class="total-row">
+            <td>Total Expansion ARR Range (ex. Phase 1)</td>
+            <td></td>
+            <td></td>
+            <td>$370K – $540K</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flag flag-warn">
+      <strong>⚠ Budget Framing — Connect Expansion to the $1B Revenue Target:</strong> Torani is a B-Corp, employee-owned company with a mission-driven culture that evaluates investment through the lens of enabling its people and its growth ambition — not pure cost-cutting. The $1B by 2030 target is the commercial north star. Every MuleSoft expansion conversation should be framed as "here is the integration investment that enables the commercial capability that gets Torani to $1B" — not as a technology cost or infrastructure upgrade. TPM accuracy, demand sensing, and Service Cloud completeness are the specific commercial capabilities. The growth mission is the budget justification. Danielle and Finance will both respond to this framing.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 06 -->
+  <div class="section">
+    <div class="section-label">Section 06</div>
+    <div class="section-title">Proof Points</div>
+
+    <div class="proof-card">
+      <div class="proof-label">Proof Point 1 — Reference Customer Parallel</div>
+      <div class="proof-title">Monin &amp; Finest Call — CPG Flavor Brand Distribution Complexity Analogs</div>
+      <div class="proof-body">Monin, Torani's closest direct competitor in the premium flavored syrup category, and Finest Call, the cocktail mixer brand, both operate the same two-sided distribution complexity that Torani faces: a professional foodservice channel managed through a distributed network of broadline and specialty distributors, and a retail channel competing for shelf space with real-time promotional requirements. The operational intelligence gap — managing distributor inventory, measuring promotional lift, and sensing demand in real time across both channels — is the defining data challenge for brands at Torani's scale and growth rate. More broadly, MuleSoft's work with consumer packaged goods companies navigating the distributor data and trade spend integration challenge demonstrates the exact pattern Torani's expansion roadmap requires: System APIs on distributor EDI and POS feeds, Process APIs for trade spend accrual normalization, and Experience APIs delivering real-time signals to demand planning and Salesforce commercial teams. The companies that have solved this architecture problem run better promotions, waste less on inefficient trade spend, and forecast demand with enough accuracy to operate their production facilities efficiently. Torani's Flavor Factory is the most capital-intensive asset in the business — it needs real-time demand data to earn its return on that $40M+ investment.</div>
+      <div class="anchor-quote">"The account team can use in conversation: 'The companies in your category that have connected their distributor network data to their commercial planning systems are making promotional investment decisions with a level of precision that compounds over years. That's the advantage Phase 2 builds for Torani.'"</div>
+    </div>
+
+    <div class="proof-card">
+      <div class="proof-label">Proof Point 2 — Competitive Defense: Expanding MuleSoft vs. Adding Point Solutions</div>
+      <div class="proof-title">Why Each New Point Solution Without MuleSoft Creates Another Data Silo</div>
+      <div class="proof-body">As Torani evaluates the TPM platform, ITSM replacement, and Data Cloud, each vendor will propose a native connector or direct data feed as its integration approach. The argument against this pattern is specific to Torani's situation: the October Tableau audit's finding of 66% obsolete dashboards is the direct consequence of a tech stack built on point-to-point data connections that were maintained well at launch and abandoned over time. Every new platform added to Torani's stack through a direct connector rather than a MuleSoft API layer is another connection that will require individual maintenance as the source system changes, another data feed that can fail silently, and another integration that cannot be governed, monitored, or reused by any other consuming system. The TPM platform's native ERP connector will break when Torani upgrades the ERP. The ITSM tool's direct data feeds will require manual reconciliation when schemas change. Danielle was hired specifically to end this pattern — MuleSoft's API-led connectivity model is the architectural standard that makes that possible, but only if it is applied consistently as each new platform is added to the stack.</div>
+    </div>
+
+    <div class="proof-card">
+      <div class="proof-label">Proof Point 3 — Timing / Forcing Function Argument</div>
+      <div class="proof-title">The Go-Live Dinner Is the Single Best Expansion Conversation Opportunity of the Year</div>
+      <div class="proof-body">Torani's MuleSoft relationship is at its highest point of internal credibility immediately after Phase 1 go-live. The IT team is celebrating a successful implementation. Danielle has delivered on the first milestone of her modernization mandate. Finance and Retail Sales are about to evaluate a TPM platform. Service Cloud is expanding in May. The account team has earned the right to a forward-looking strategic conversation — and that conversation will never be easier to have than it is at the go-live dinner on May 6. In six months, the initial enthusiasm will have normalized, budget cycles will have closed around existing commitments, and the TPM vendor will have proposed its own integration approach. The window to frame MuleSoft's expansion story as the strategic backbone of Torani's $1B journey — and to attach it to the TPM and Service Cloud investments already in motion — is the post-go-live engagement. Use it deliberately, not as a celebration, but as the opening of the next chapter of the account relationship.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 07 -->
+  <div class="section">
+    <div class="section-label">Section 07</div>
+    <div class="section-title">Target Contacts</div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar contact-avatar-green">DH</div>
+        <div>
+          <div class="contact-role-badge contact-role-badge-green">Primary Champion — IT Strategy</div>
+          <div class="contact-name">Danielle — Head of IT</div>
+          <div class="contact-title-line">Head of Information Technology · Joined January 2026 · 3–5 year modernization mandate</div>
+        </div>
+      </div>
+      <div class="contact-body">Danielle is the single most important contact in this account. She was hired specifically to execute a real-time integration and modernization vision — which means MuleSoft's Phase 1 success is her professional credibility, and Phase 2 and 3 are her stated mandate. She is the internal champion who will advance the expansion roadmap, build the budget case for each subsequent phase, and ensure MuleSoft is positioned as the architectural standard against which every new platform integration is evaluated. The go-live dinner is the moment to deepen this relationship from implementation vendor to strategic partner.</div>
+      <div class="contact-question">"Now that Phase 1 is live, what does the 3–5 year roadmap look like from your perspective — and as the TPM evaluation and Service Cloud expansion both come to a head in the next 60 days, how are you thinking about the integration architecture for each of those to ensure they don't create the same data silo problem the Tableau audit revealed?"</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar">PL</div>
+        <div>
+          <div class="contact-role-badge">Champion — Infrastructure &amp; ITSM</div>
+          <div class="contact-name">Paul Lim — Director of IT Infrastructure &amp; Cybersecurity</div>
+          <div class="contact-title-line">Director IT Infrastructure · ITSM/Jira evaluation lead · Closing July 2026</div>
+        </div>
+      </div>
+      <div class="contact-body">Paul Lim owns the ITSM evaluation and is the internal lead on the Jira replacement opportunity closing in July. His infrastructure and cybersecurity mandate means he is also likely the person responsible for the on-premise and network architecture decisions that affect how MuleSoft connects to Torani's systems. He is a natural ally for the MuleSoft governance and monitoring conversation — the Anypoint Platform's API Manager and Runtime Manager capabilities speak directly to his security and infrastructure oversight responsibilities.</div>
+      <div class="contact-question">"As you're evaluating Salesforce ITSM as a Jira replacement, how are you thinking about the integration architecture for ITSM-to-operational system connections — and does MuleSoft's existing deployment give you a governance layer for those data flows that a native ITSM connector wouldn't provide?"</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar">FN</div>
+        <div>
+          <div class="contact-role-badge">Commercial Sponsor</div>
+          <div class="contact-name">Identity TBD — CFO or VP Finance, Torani</div>
+          <div class="contact-title-line">Head of Finance · TPM evaluation stakeholder · $1B growth mandate owner</div>
+        </div>
+      </div>
+      <div class="contact-body">The Finance leader is the primary sponsor for the TPM evaluation and the person accountable for trade spend ROI discipline as Torani scales toward $1B. They are the commercial stakeholder who will approve Phase 2's TPM data foundation investment and the person most motivated by the accuracy argument — better trade spend data produces better promotional ROI, which is a direct margin impact at scale. Their buy-in is required before the TPM integration use case can advance to a scoping stage.</div>
+      <div class="contact-question">"As you're evaluating TPM platforms for trade promotion management, how are you thinking about the data architecture needed to feed the platform with real-time ERP accrual and retail sell-through data — and have you mapped out what the integration requirements look like for the platform to produce accurate promotional ROI analytics?"</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar">SL</div>
+        <div>
+          <div class="contact-role-badge">Commercial Lead</div>
+          <div class="contact-name">Identity TBD — VP Retail Sales or VP Commercial, Torani</div>
+          <div class="contact-title-line">Head of Retail Sales / Commercial · Trade spend and distribution management</div>
+        </div>
+      </div>
+      <div class="contact-body">The retail sales or commercial leader owns the distributor and retail account relationships that generate the demand signals Torani needs for accurate production planning and promotional optimization. This person feels the distributor data latency problem most directly — their team makes account investment decisions based on sell-through data that arrives too late to inform real-time promotional adjustments. They are the most natural business-side champion for the distributor demand sensing and TPM use cases.</div>
+      <div class="contact-question">"When your team is managing promotional investments with a major grocery retailer or a large foodservice distributor, how current is the sell-through data you're working with — and how often do you find out that a promotion underperformed after the promotional window has already closed?"</div>
+    </div>
+
+    <div class="flag flag-info">
+      <strong>Contact Research Priority:</strong> Danielle and Paul Lim are both named and confirmed — they are the immediate engagement priorities. The Finance lead and commercial sales lead are the two unnamed contacts whose engagement unlocks the TPM and distributor use cases. Ask Danielle directly at the go-live dinner to make introductions to the Finance and commercial leaders who are driving the TPM evaluation — framing the introduction as ensuring the MuleSoft integration architecture supports the TPM platform's data requirements. That introduction request is natural, timely, and will likely be received positively given the Phase 1 relationship.
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label">MuleSoft Status</div>
+        <div class="metric-value">Live May 6 — Phase 1</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Revenue Target</div>
+        <div class="metric-value">$1B by 2030</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Open Pipeline (FY27)</div>
+        <div class="metric-value">$123K across 4 opportunities</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Expansion Potential</div>
+        <div class="metric-value">$370K – $540K ARR</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 08 -->
+  <div class="section">
+    <div class="section-label">Section 08</div>
+    <div class="section-title">Next Steps</div>
+    <div class="step-list">
+
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Use the May 6 Go-Live Dinner as a Strategic Roadmap Conversation</div>
+          <div class="step-body">The go-live dinner is not a project close — it is the opening of the expansion relationship. Come prepared with a one-page visual of the 3–5 year MuleSoft expansion roadmap that maps Phase 1's foundation to the TPM, distributor demand sensing, Service Cloud, and Data Cloud phases. The framing is "Phase 1 is the foundation — here is what the building looks like." Do not pitch; share the roadmap, invite Danielle's reaction, and listen for which Phase 2 use case resonates most strongly. Success is Danielle's verbal endorsement of the roadmap direction and an introduction request to the Finance and commercial sales leaders.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Attach MuleSoft to the TPM Platform Evaluation — Before a Vendor Is Selected</div>
+          <div class="step-body">The TPM evaluation is active now, with Finance as the primary stakeholder. The critical window is before a TPM vendor is selected — because once selected, that vendor will propose its own native integration approach. Request a meeting with the Finance lead (via Danielle's introduction) focused specifically on the data architecture requirements for TPM effectiveness: what data sources need to feed the platform, what latency is acceptable, and how the integration will be maintained as source systems evolve. Position MuleSoft as the integration standard that makes any TPM platform perform to its potential. Success is inclusion in the TPM vendor evaluation process as the integration architecture provider rather than being selected after the fact.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Scope Phase 2A and 2B Together: TPM + Service Cloud in a Single Integration Proposal</div>
+          <div class="step-body">The TPM data foundation and Service Cloud ERP integration share overlapping System API requirements — both need real-time ERP data, and both benefit from the same distributor data normalization layer. Scoping them together reduces the total implementation cost relative to sequential independent projects and creates a more compelling business case for Finance. The combined Phase 2 proposal should include a quantified ROI estimate: TPM accuracy improvement tied to a promotional ROI percentage, and Service Cloud handle time reduction tied to first-call resolution rate improvement. Success is a Phase 2 proposal accepted by Finance and IT leadership within 60 days of go-live.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Align Phase 2C (Distributor Demand Sensing) with the Retail Sales Team's Planning Cycle</div>
+          <div class="step-body">The distributor demand sensing use case has the highest operational impact on the Flavor Factory production efficiency, but it requires the commercial sales team's buy-in to access distributor data sharing agreements. Engage the VP Retail Sales or commercial lead (via the go-live dinner introduction chain) to understand the current distributor data landscape — which distributors already share POS data, which are on EDI, and what the data sharing agreement landscape looks like. This scoping work can run in parallel with Phase 2A/2B and sets up Phase 2C as a natural next commitment. Success is a distributor data inventory completed and the commercial lead engaged as a Phase 2C sponsor.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Position MuleSoft as the Data Cloud Ingestion Standard Before the Data Cloud Evaluation Begins</div>
+          <div class="step-body">Data Cloud is in Torani's 3–5 year roadmap but has not yet entered active evaluation. The account team's goal is to ensure that when the Data Cloud evaluation begins — which Danielle will lead — the decision about ingestion architecture has already been made in MuleSoft's favor through the Phase 2 expansion. Schedule a Data Cloud architecture preview session with Danielle and the Salesforce Data Cloud specialist to show how Phase 2's API layer becomes the Data Cloud ingestion foundation — making the Data Cloud deployment faster, cleaner, and more reliable than an alternative built on direct connectors. Success is Danielle's agreement that MuleSoft is the designated ingestion layer for Data Cloud before the formal evaluation begins.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Build the December Renewal into a Multi-Year Expansion Agreement</div>
+          <div class="step-body">The MuleSoft Phase 1 renewal is scheduled for December 2026 at $23K. If Phase 2 is contracted and in implementation by that point, the December renewal conversation becomes a multi-year expansion agreement that locks in Phase 2's scope and creates a commercial container for Phase 3. Work with the Salesforce AE to structure the December renewal as a multi-phase agreement covering Phase 1 renewal plus Phase 2 expansion — reducing the per-phase contracting overhead and giving Torani a predictable technology investment that aligns with Danielle's 3–5 year roadmap. Success is a multi-year MuleSoft agreement signed by December 2026 that covers at minimum Phase 1 renewal and Phase 2A/2B scope.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flag flag-danger" style="margin-top: 1.5rem;">
+      <strong>Forcing Function — The Expansion Window Is the Go-Live Moment:</strong> Torani's MuleSoft relationship will never be at higher internal credibility than the two to four weeks following the May 6 go-live. Danielle has just delivered Phase 1. The IT team is engaged. Finance and commercial leadership are evaluating TPM. Service Cloud is expanding. Every commercial and strategic thread in this account is active simultaneously, and the account team has earned the right to a forward-looking strategic conversation. That window closes gradually as the go-live celebration normalizes, as budget cycles close, and as the TPM vendor selection moves forward without MuleSoft's integration architecture in the room. The account team's task for May is not to celebrate the close of Phase 1 — it is to open Phase 2 before the momentum dissipates.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
