@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Great Lakes Wines & Spirits — MuleSoft + Tableau Point of Value</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.75; color: #1a1a1a; background: #f9f8f6; }
+  .page { max-width: 980px; margin: 0 auto; background: #fff; padding: 3rem 3.5rem 5rem; }
+
+  .pov-header { border-bottom: 2px solid #1a1a1a; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .pov-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #999; margin-bottom: 6px; }
+  .pov-title { font-size: 30px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .pov-subtitle { font-size: 15px; color: #555; margin-bottom: 1rem; }
+  .pov-meta { display: flex; gap: 24px; flex-wrap: wrap; }
+  .pov-meta-item { font-size: 12px; color: #888; }
+  .pov-meta-item strong { color: #333; font-weight: 600; }
+
+  .section { margin-bottom: 3.5rem; }
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #bbb; margin-bottom: 4px; }
+  .section-title { font-size: 22px; font-weight: 600; color: #111; margin-bottom: 1.25rem; padding-bottom: 0.6rem; border-bottom: 1px solid #eae8e2; }
+
+  .prose p { margin: 0 0 1rem; font-size: 15px; color: #333; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .flag { border-radius: 6px; padding: 14px 18px; margin-top: 1.5rem; font-size: 13.5px; line-height: 1.65; }
+  .flag-warn { background: #FAEEDA; border-left: 4px solid #BA7517; color: #633806; }
+  .flag-danger { background: #FCEBEB; border-left: 4px solid #A32D2D; color: #501313; }
+  .flag-info { background: #E6F1FB; border-left: 4px solid #185FA5; color: #042C53; }
+  .flag-success { background: #EAF3DE; border-left: 4px solid #3B6D11; color: #173404; }
+  .flag strong { font-weight: 600; }
+
+  .renewal-banner { background: #FCEBEB; border: 1px solid #F09595; border-radius: 8px; padding: 14px 18px; margin-bottom: 2rem; font-size: 13.5px; color: #501313; line-height: 1.65; }
+  .renewal-banner strong { font-weight: 600; }
+
+  .conf-banner { background: #EAF3DE; border: 1px solid #97C459; border-radius: 8px; padding: 14px 18px; margin-bottom: 1rem; font-size: 13.5px; color: #173404; line-height: 1.65; }
+  .conf-banner strong { font-weight: 600; }
+
+  .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(275px, 1fr)); gap: 12px; margin-bottom: 2rem; }
+  .pain-card { background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; }
+  .pain-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .pain-num { font-size: 11px; font-weight: 600; color: #bbb; letter-spacing: 0.06em; }
+  .badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 4px; }
+  .badge-critical { background: #FCEBEB; color: #501313; }
+  .badge-high { background: #FAEEDA; color: #633806; }
+  .badge-medium { background: #E6F1FB; color: #042C53; }
+  .pain-card-title { font-size: 13.5px; font-weight: 600; color: #111; margin-bottom: 6px; }
+  .pain-card-body { font-size: 13px; color: #555; line-height: 1.6; }
+
+  .tech-wrap { overflow-x: auto; margin-top: 1rem; }
+  .tech-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tech-table th { text-align: left; font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 10px; border-bottom: 1px solid #eae8e2; white-space: nowrap; }
+  .tech-table td { padding: 9px 10px; border-bottom: 1px solid #f4f2ee; color: #333; vertical-align: top; font-size: 13px; }
+  .tech-table tr:last-child td { border-bottom: none; }
+  .tech-table td:first-child { color: #888; font-weight: 500; white-space: nowrap; }
+
+  .uc-card { background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 14px; }
+  .uc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .uc-priority { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 4px; }
+  .p1 { background: #FCEBEB; color: #501313; }
+  .p2 { background: #FAEEDA; color: #633806; }
+  .p3 { background: #E6F1FB; color: #042C53; }
+  .uc-title { font-size: 15px; font-weight: 600; color: #111; }
+  .uc-category { font-size: 11px; color: #bbb; margin-left: auto; }
+  .uc-body { font-size: 13.5px; color: #444; line-height: 1.7; }
+  .uc-body p { margin: 0 0 10px; }
+  .uc-body p:last-child { margin-bottom: 0; }
+
+  .arch-layer { border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .arch-layer-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 3px; }
+  .arch-layer-sub { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+  .arch-systems { display: flex; flex-wrap: wrap; gap: 6px; }
+  .arch-chip { font-size: 12px; padding: 4px 11px; border-radius: 999px; background: #f4f2ee; border: 1px solid #e0ddd6; color: #555; }
+
+  .rev-wrap { overflow-x: auto; }
+  .rev-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 1rem; }
+  .rev-table th { text-align: left; font-size: 11px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 10px; border-bottom: 1px solid #eae8e2; }
+  .rev-table td { padding: 10px; border-bottom: 1px solid #f4f2ee; color: #333; vertical-align: top; font-size: 13px; }
+  .rev-table tr.total-row td { border-bottom: none; font-weight: 600; background: #f4f2ee; font-size: 13.5px; border-top: 1px solid #ddd; }
+  .status-pill { font-size: 11px; padding: 2px 9px; border-radius: 4px; font-weight: 600; white-space: nowrap; }
+  .s-pipeline { background: #EAF3DE; color: #173404; }
+  .s-scoping { background: #FAEEDA; color: #633806; }
+  .s-eval { background: #E6F1FB; color: #042C53; }
+  .s-roadmap { background: #f0ece6; color: #888; }
+
+  .proof-card { border: 1px solid #eae8e2; border-radius: 10px; padding: 1.25rem 1.5rem; margin-bottom: 14px; }
+  .proof-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #bbb; margin-bottom: 5px; }
+  .proof-title { font-size: 15px; font-weight: 600; color: #111; margin-bottom: 10px; }
+  .proof-body { font-size: 13.5px; color: #444; line-height: 1.7; }
+  .anchor-quote { border-left: 2px solid #ccc; padding: 6px 14px; margin-top: 14px; font-size: 13px; font-style: italic; color: #666; }
+
+  .contact-card { background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .contact-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .contact-avatar { width: 42px; height: 42px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #185FA5; flex-shrink: 0; }
+  .contact-role-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 4px; background: #E6F1FB; color: #042C53; display: inline-block; margin-bottom: 3px; }
+  .contact-name { font-size: 14px; font-weight: 600; color: #111; }
+  .contact-title-line { font-size: 12px; color: #888; }
+  .contact-body { font-size: 13px; color: #555; line-height: 1.65; margin-bottom: 10px; }
+  .contact-question { font-size: 13px; font-style: italic; color: #222; background: #f9f8f6; border-radius: 6px; padding: 10px 14px; border: 1px solid #eae8e2; }
+
+  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 1.5rem; }
+  .metric-card { background: #f4f2ee; border-radius: 8px; padding: 12px 14px; }
+  .metric-label { font-size: 10px; color: #aaa; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .metric-value { font-size: 13px; font-weight: 600; color: #222; }
+
+  .step-list { display: flex; flex-direction: column; gap: 10px; }
+  .step-item { display: flex; gap: 14px; align-items: flex-start; background: #fff; border: 1px solid #eae8e2; border-radius: 10px; padding: 1rem 1.25rem; }
+  .step-num { width: 30px; height: 30px; border-radius: 50%; background: #E6F1FB; color: #185FA5; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 4px; }
+  .step-body { font-size: 13px; color: #555; line-height: 1.65; }
+
+  .divider { height: 1px; background: #eae8e2; margin: 3rem 0; }
+  .stack-label { font-size: 12px; font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; margin-top: 1.5rem; display: block; }
+
+  .acq-wrap { background: #f9f8f6; border: 1px solid #eae8e2; border-radius: 8px; padding: 12px 16px; margin: 1rem 0 1.5rem; }
+  .acq-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #aaa; margin-bottom: 8px; }
+  .acq-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .acq-chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: #fff; border: 1px solid #e0ddd6; color: #555; }
+
+  @media print {
+    body { background: #fff; }
+    .page { padding: 2rem 2.5rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="pov-header">
+    <div class="pov-eyebrow">Point of Value — MuleSoft + Tableau</div>
+    <div class="pov-title">Great Lakes Wines &amp; Spirits</div>
+    <div class="pov-subtitle">Beverage Alcohol Distribution / Michigan Three-Tier System · Multi-Generational Family Business</div>
+    <div class="pov-meta">
+      <div class="pov-meta-item"><strong>Status:</strong> New Prospect</div>
+      <div class="pov-meta-item"><strong>Salesforce:</strong> Known Customer · Tableau Cloud active</div>
+      <div class="pov-meta-item"><strong>Ownership:</strong> Ross &amp; Cooper families (Co-CEO)</div>
+      <div class="pov-meta-item"><strong>HQ:</strong> Dearborn, MI</div>
+      <div class="pov-meta-item"><strong>Revenue:</strong> ~$437M · ~850 employees</div>
+      <div class="pov-meta-item"><strong>Prepared:</strong> April 2026</div>
+    </div>
+  </div>
+
+  <!-- IMMEDIATE ALERTS -->
+  <div class="renewal-banner">
+    <strong>⚠ Tableau Renewal Due April 27, 2026 — 5 Days Away:</strong> GLWAS's Tableau Cloud annual subscription ($34,748 ACV) auto-renews April 27. An internal forensics review confirmed product underutilization — minimal uplift available ($7). Auto-renewal will close this as a maintenance event unless the account team acts now to reframe the renewal as the opening of a strategic platform conversation. Danielle Nadeau (Director of Trade Development) received renewal outreach February 23. Adrian Garcia (new Account Director, February 25) must be briefed immediately. The renewal is not the goal — it is the entry point.
+  </div>
+  <div class="conf-banner">
+    <strong>Tableau Conference 2026 — May 5–7, San Diego:</strong> GLWAS confirmed attendance. This is the highest-value in-person engagement opportunity in the near-term calendar. The account team should have a meeting scheduled with Danielle Nadeau or the technology lead before the conference opens. The MuleSoft + Tableau combined story lands best in a conference context where the broader platform vision is on display.
+  </div>
+
+  <!-- SECTION 01 -->
+  <div class="section">
+    <div class="section-label">Section 01</div>
+    <div class="section-title">Current Situation</div>
+
+    <div class="acq-wrap">
+      <div class="acq-label">Acquisition History — Integration Debt Context</div>
+      <div class="acq-list">
+        <span class="acq-chip">Bellino</span>
+        <span class="acq-chip">Tom Ryan</span>
+        <span class="acq-chip">Demorest</span>
+        <span class="acq-chip">Oak</span>
+        <span class="acq-chip">Gordon</span>
+        <span class="acq-chip">Classic</span>
+        <span class="acq-chip">Fabiano Wine</span>
+        <span class="acq-chip">Henry Fox</span>
+        <span class="acq-chip">Motor City Seafood</span>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p>Great Lakes Wines &amp; Spirits is one of Michigan's largest independent beverage alcohol distributors, with approximately $437 million in annual revenue, 850 employees, and a route network serving 17,000 licensed retail accounts across the state. The company is governed under a Co-CEO structure shared between the Ross and Cooper families — Syd Ross and Lew Cooper III — representing a four-generation ownership partnership that has built the business through both organic growth and a significant acquisition history spanning at least nine named companies. GLWAS operates within Michigan's three-tier alcohol distribution system, which creates a regulatory environment that is materially more complex than most industries: every transaction flows through state-mandated distributor intermediaries, every SKU must be licensed at the state level, and every supplier relationship involves depletion reporting and VIP (Voluntary Incentive Program) fund management governed by both contractual and regulatory requirements. The combination of acquisition-driven growth, Michigan-specific regulatory complexity, and a 17,000-account route operation creates an integration and data infrastructure challenge that is among the most technically demanding in the mid-market distribution sector.</p>
+      <p>The technology picture at GLWAS is consistent with a company that has grown faster through acquisition than its systems have been able to consolidate. Each acquired entity — Bellino, Tom Ryan, Demorest, Oak, Gordon, Classic, Fabiano Wine, Henry Fox, and Motor City Seafood — almost certainly arrived with its own ERP, customer database, route management system, and supplier reporting infrastructure. The current Tableau Cloud deployment, confirmed active with an April 27 renewal, is a signal that GLWAS has made analytics investment — but the internal forensics review confirming product underutilization suggests that the analytics layer is only as good as the data feeding it, and that data is almost certainly fragmented across the post-acquisition system landscape. Salesforce is active in the account, and the beverage distribution vertical within Salesforce is well-established — Consumer Goods Cloud has meaningful adoption among distributors precisely because the rep routing, visit planning, order capture, promotional calendar, and category management workflows map directly onto how a distributor's sales force operates in the field. The gap between what Salesforce and Tableau could deliver for GLWAS and what they are currently delivering is an integration gap, not a capability gap.</p>
+      <p>The competitive environment for GLWAS creates additional urgency for operational modernization. Southern Glazer's — the largest wine and spirits distributor in the United States — operates at national scale with enterprise-grade data infrastructure that gives its supplier partners and retail accounts a level of analytics and reporting that independent regional distributors like GLWAS cannot match without deliberate investment. In Michigan's three-tier system, GLWAS's independence is its differentiation — local relationships, market knowledge, and supplier responsiveness that a national distributor cannot replicate. But that differentiation is only sustainable if GLWAS can compete on data quality and reporting capability with suppliers who are simultaneously served by national distributors offering sophisticated depletion analytics, promotional ROI tracking, and category management dashboards. The integration investment that connects GLWAS's ERP, route management, supplier reporting, and compliance systems to a unified Salesforce + Tableau intelligence layer is not a technology project — it is the operational infrastructure that protects the company's competitive position against Southern Glazer's in every supplier conversation GLWAS has.</p>
+    </div>
+
+    <div class="flag flag-warn">
+      <strong>⚠ Co-CEO Governance &amp; Family Ownership Culture:</strong> Major technology decisions at GLWAS require alignment between the Ross and Cooper families — two ownership lines with a shared Co-CEO governance structure. This is not a single executive sponsor situation. Any enterprise technology investment must be framed to resonate with both families' priorities: operational continuity, competitive positioning against national distributors, and return on investment appropriate for a family-owned business with a long-term ownership horizon. Do not use transformation language. Use the language of competitive intelligence, supplier relationship protection, and route productivity. Michigan-specific regulatory complexity (three-tier system, state licensing) should be named explicitly — it signals industry fluency and builds credibility with leadership that has spent careers navigating it.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 02 -->
+  <div class="section">
+    <div class="section-label">Section 02</div>
+    <div class="section-title">Pain Points</div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 01</span><span class="badge badge-critical">Critical</span></div>
+        <div class="pain-card-title">Tableau Is Underperforming Because the Data Feeding It Is Fragmented</div>
+        <div class="pain-card-body">The internal forensics review confirmed Tableau product underutilization — the same finding that affects every analytics deployment built on top of disconnected post-acquisition ERPs and SFTP data feeds. GLWAS is paying $34,748/year for an analytics platform that cannot deliver its full value because the route, order, depletion, and compliance data that should feed it arrives inconsistently, incompletely, or not at all. This is a MuleSoft problem presenting as a Tableau problem.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 02</span><span class="badge badge-critical">Critical</span></div>
+        <div class="pain-card-title">Supplier VIP/Depletion Reporting Is a Manual, High-Stakes Weekly Process</div>
+        <div class="pain-card-body">GLWAS's supplier partners — major wine and spirits brands — receive weekly depletion reports and VIP fund reconciliation data that determines how much supplier promotional funding flows back to GLWAS. This data is assembled from route and order systems across a multi-acquisition ERP landscape. Manual assembly introduces errors, delays, and reporting inconsistencies that damage supplier confidence and, in worst cases, result in VIP fund disputes that cost GLWAS real margin. Automating this flow is the highest-ROI integration investment in the business.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 03</span><span class="badge badge-high">High</span></div>
+        <div class="pain-card-title">17,000 Retail Accounts Cannot Be Managed at Scale with Fragmented CRM Data</div>
+        <div class="pain-card-body">GLWAS's sales force manages route visits, order capture, promotional execution, and compliance tracking across 17,000 licensed retail licensees. Consumer Goods Cloud is purpose-built for this workflow — but its rep routing, visit planning, and order capture capabilities are only as effective as the account data, order history, and promotional calendar information that flows into it from the ERP and route management systems. Salesforce without integrated operational data is a contact database, not a sales intelligence platform.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 04</span><span class="badge badge-high">High</span></div>
+        <div class="pain-card-title">Post-Acquisition ERP Fragmentation Creates a Single Version of Truth Problem</div>
+        <div class="pain-card-body">Nine acquisitions almost certainly mean multiple legacy ERPs — Bellino, Tom Ryan, Demorest, and others may have been fully consolidated or may still maintain separate instances. Where consolidation is incomplete, a single order, a single customer account, or a single route can exist in multiple systems simultaneously. Finance, operations, and sales teams are working from different versions of the same data, creating reconciliation overhead and reporting inconsistencies that consume management time at every level of the organization.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 05</span><span class="badge badge-high">High</span></div>
+        <div class="pain-card-title">Michigan Three-Tier Compliance Reporting Is a Manual Regulatory Burden</div>
+        <div class="pain-card-body">Michigan's three-tier alcohol distribution system requires GLWAS to maintain precise records of every transaction, every licensed retailer, and every supplier relationship for state liquor control agency reporting. The complexity of maintaining compliance across 17,000 retail licensees — each with their own license status, purchase history, and compliance standing — in a fragmented system environment creates regulatory exposure and manual reporting overhead that scales poorly as the account base grows.</div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-card-header"><span class="pain-num">PAIN 06</span><span class="badge badge-medium">Medium</span></div>
+        <div class="pain-card-title">Fleet and Route Data Does Not Flow into Customer-Facing Systems</div>
+        <div class="pain-card-body">GLWAS operates a DOT-regulated delivery fleet serving 17,000 accounts on optimized routes. The real-time delivery status, route completion data, and driver activity that fleet management systems generate is almost certainly not flowing into Salesforce — which means customer service representatives handling delivery inquiries and sales reps managing account relationships cannot see live delivery status without calling dispatch. This gap degrades customer service quality and consumes operational overhead that a connected data layer would eliminate.</div>
+      </div>
+    </div>
+
+    <span class="stack-label">Known &amp; Inferred Technology Stack</span>
+    <div class="tech-wrap">
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>System / Platform</th>
+            <th>Integration Status</th>
+            <th>MuleSoft Relevance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Analytics</td><td>Tableau Cloud (confirmed · $34,748 ACV renewal Apr 27)</td><td>Active — underutilization confirmed by forensics review</td><td>Real-time data feeds replacing fragmented source connections; governed API layer for dashboard reliability</td></tr>
+          <tr><td>CRM</td><td>Salesforce (confirmed · Consumer Goods Cloud likely)</td><td>Active — integration depth to operational systems unknown</td><td>ERP + route + depletion data enrichment; rep routing and visit planning intelligence</td></tr>
+          <tr><td>ERP</td><td>Multiple legacy ERPs (post-acquisition · vendors TBD)</td><td>⛔ Likely fragmented across acquired entities</td><td>System API normalization across ERP instances; single version of truth for orders and accounts</td></tr>
+          <tr><td>Supplier Reporting</td><td>VIP/depletion reporting system (likely manual/SFTP)</td><td>⛔ Weekly manual assembly suspected</td><td>Automated depletion API; real-time VIP fund reconciliation to supplier portals</td></tr>
+          <tr><td>Route / Fleet Mgmt</td><td>Route optimization + DOT fleet system (vendor TBD)</td><td>⚠ Likely isolated from CRM and analytics</td><td>Fleet status API; real-time delivery visibility in Salesforce</td></tr>
+          <tr><td>Warehouse Mgmt</td><td>WMS across multiple facilities (vendor TBD)</td><td>⚠ Multi-facility; likely separate from ERP and Salesforce</td><td>Inventory availability API; warehouse-to-order fulfillment data for rep visibility</td></tr>
+          <tr><td>State Compliance</td><td>Michigan LCC reporting system (likely manual/proprietary)</td><td>⚠ Regulatory reporting likely manual extraction</td><td>Compliance data pipeline; automated licensee status and transaction reporting</td></tr>
+          <tr><td>EDI</td><td>EDI integrations with 17,000 retailers</td><td>⚠ Legacy EDI — likely fragmented post-acquisition</td><td>EDI modernization API layer; normalized retailer transaction data into Salesforce and analytics</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 03 -->
+  <div class="section">
+    <div class="section-label">Section 03</div>
+    <div class="section-title">MuleSoft + Tableau Use Cases</div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p1">P1</span>
+        <span class="uc-title">01 — Supplier Depletion &amp; VIP Fund Reporting Automation</span>
+        <span class="uc-category">Supplier Intelligence · MuleSoft + Tableau</span>
+      </div>
+      <div class="uc-body">
+        <p>GLWAS's most commercially sensitive data operation is the weekly depletion report and VIP fund reconciliation it provides to supplier partners. These reports determine how much promotional funding flows back to GLWAS and define the quality of the distributor-supplier relationship — which in the Michigan market is the primary competitive differentiator against Southern Glazer's. Today this process almost certainly involves manual extraction from multiple ERP and route management systems, manual assembly into a reporting format, and delivery through email or supplier portal upload. Every manual step introduces error risk, and every reporting inconsistency is a conversation that damages the supplier relationship GLWAS depends on.</p>
+        <p>MuleSoft builds System APIs on each ERP and route management system that expose depletion data — units sold by SKU, by account, by rep, by period — in a normalized schema. A Process API assembles the depletion picture across all source systems and calculates VIP fund accruals against the supplier contract terms. An Experience API delivers the completed depletion report to each supplier's portal in the format they require — eliminating the manual assembly step entirely. Tableau receives the same normalized depletion data stream and surfaces it in supplier-facing category management dashboards that GLWAS account managers can share in supplier reviews.</p>
+        <p>The business outcome is a supplier reporting function that runs automatically, accurately, and on time — every week, without manual intervention. GLWAS moves from a distributor that reports depletion to a distributor that provides real-time depletion intelligence, which is a qualitative leap in the supplier relationship that protects and expands VIP fund allocations. For a $437M distributor where supplier promotional funding represents a meaningful margin contribution, this use case has the clearest and most direct ROI of any integration investment available.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p1">P1</span>
+        <span class="uc-title">02 — Salesforce + ERP Integration: Rep Intelligence Across 17,000 Accounts</span>
+        <span class="uc-category">Sales Force Effectiveness · MuleSoft + Salesforce</span>
+      </div>
+      <div class="uc-body">
+        <p>GLWAS's sales force manages route visits and order capture across 17,000 licensed retail licensees — one of the largest retail account bases of any independent distributor in Michigan. Consumer Goods Cloud's rep routing, visit planning, and order capture capabilities are purpose-built for exactly this workflow. But those capabilities require the Salesforce account record to contain real-time order history, current inventory availability, active promotional offers, and account compliance standing — data that lives in the ERP, WMS, and compliance systems and is almost certainly not flowing into Salesforce in real time. A rep arriving at an account without this context is operating with a partial picture of the relationship at the moment that matters most.</p>
+        <p>MuleSoft connects the ERP order history, WMS inventory positions, promotional calendar data, and Michigan LCC licensee compliance status to Salesforce through a unified account enrichment Process API. Every account record in Consumer Goods Cloud becomes a complete picture of the relationship: last order date and mix, current promotional offers available, inventory of key SKUs at the warehouse, and licensee compliance standing. Route planning becomes data-driven rather than rep-intuition-driven, and order capture at the account becomes informed by real inventory and promotional availability. The same data feeds Tableau dashboards for sales management visibility into rep productivity, account coverage, and promotional execution rates.</p>
+        <p>The business outcome is a sales force that operates with the data intelligence of a national distributor while retaining the local relationship advantage of an independent. In Michigan, where Southern Glazer's competes for the same accounts with enterprise-scale data tools, this capability is a retention mechanism for GLWAS's most productive reps and a competitive argument in every supplier conversation about route effectiveness and account penetration.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p1">P1</span>
+        <span class="uc-title">03 — Tableau Data Foundation: Fixing Underutilization at the Source</span>
+        <span class="uc-category">Analytics Modernization · MuleSoft + Tableau</span>
+      </div>
+      <div class="uc-body">
+        <p>The internal forensics review confirming Tableau underutilization at GLWAS has the same root cause as every analytics underperformance finding at a post-acquisition distributor: the dashboards are only as good as the data feeding them, and the data is arriving inconsistently from fragmented post-acquisition ERPs through manual or SFTP-based processes. The renewal conversation happening April 27 is an opportunity to reframe the Tableau investment — from a licensing maintenance event into a data infrastructure commitment that makes the $34,748 annual spend justify itself and expand.</p>
+        <p>MuleSoft creates a governed API data layer that replaces GLWAS's fragmented Tableau data sources with real-time, normalized feeds from each operational system — ERP depletion data, route completion data, WMS inventory positions, supplier VIP fund balances, and Michigan LCC compliance metrics. Each data source is wrapped in a System API that makes the feed reliable, monitored, and version-controlled — so when an ERP is upgraded or a new acquisition brings a new system, the Tableau dashboard layer is shielded from that change. The result is a Tableau deployment where the dashboards that matter — supplier category management, rep productivity, promotional ROI, and account compliance — are always current, always accurate, and trusted by the people who use them.</p>
+        <p>The outcome is a Tableau renewal conversation that shifts from "you're underutilizing your licenses" to "here is the investment that makes Tableau deliver on its full potential for your supplier relationships and your sales management function." The $34,748 renewal becomes the anchor for a much larger platform conversation — one that includes MuleSoft as the foundation and Tableau as the intelligence layer that GLWAS's supplier partners will see and value directly.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p2">P2</span>
+        <span class="uc-title">04 — Post-Acquisition ERP Consolidation API Layer</span>
+        <span class="uc-category">Data Modernization · MuleSoft</span>
+      </div>
+      <div class="uc-body">
+        <p>Nine acquisitions over GLWAS's history — each likely with its own ERP, customer database, and reporting infrastructure — create a technology landscape where the single version of truth that Finance, Operations, and Sales all need does not currently exist. Whether GLWAS has fully consolidated its ERP instances or is still running multiple systems in parallel, the data consistency problem is real: orders, accounts, routes, and inventory positions that span the acquired entities require reconciliation steps that consume management overhead and introduce reporting lag that affects both internal decision-making and external supplier reporting.</p>
+        <p>Rather than requiring ERP consolidation — a multi-year, high-risk project that a family-owned business with a conservative technology culture will rightly approach with caution — MuleSoft creates a normalization layer that treats each ERP as a stable System API source and assembles a consistent, unified data view at the Process API layer. The ERPs do not need to change. The business gets the unified data picture it needs through the integration layer, with the option to consolidate underlying systems on its own timeline. This is a low-disruption path to data consistency that preserves operational continuity — the most important constraint for a 17,000-account route operation that cannot afford system instability.</p>
+        <p>The business outcome is a finance and operations function that produces consolidated reporting without manual reconciliation, a sales function that has a consistent account view regardless of which legacy system holds the account's history, and a platform that absorbs future acquisitions as a System API addition rather than a custom integration project.</p>
+      </div>
+    </div>
+
+    <div class="uc-card">
+      <div class="uc-header">
+        <span class="uc-priority p3">P3</span>
+        <span class="uc-title">05 — Michigan LCC Compliance Automation</span>
+        <span class="uc-category">Regulatory Compliance · MuleSoft</span>
+      </div>
+      <div class="uc-body">
+        <p>Michigan's three-tier alcohol distribution system requires GLWAS to maintain precise licensee records, transaction histories, and compliance status tracking for every one of its 17,000 retail accounts. The Michigan Liquor Control Commission's reporting requirements — license verification before delivery, transaction reporting, and periodic compliance submissions — are a regulatory overhead that scales with account volume and is currently managed through processes that are almost certainly manual-intensive given the post-acquisition system fragmentation. A compliance failure or reporting error in this environment carries real regulatory consequences.</p>
+        <p>MuleSoft builds a Compliance Data API that pulls real-time licensee status from the Michigan LCC's data systems, matches it against GLWAS's active account list in Salesforce, and flags compliance exceptions before a delivery is dispatched. The same API layer feeds automated compliance reporting to the LCC on the required schedule, eliminating the manual extraction and submission process. Salesforce account records display current licensee compliance status for every retail account — giving reps and customer service teams immediate visibility into whether an account can legally receive a delivery before the truck is loaded.</p>
+        <p>For a distributor whose entire business depends on operating within the three-tier system's regulatory framework, compliance automation is both a risk management investment and an operational efficiency gain — and it is a capability that GLWAS's supplier partners will value as evidence of the distributor's operational sophistication.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 04 -->
+  <div class="section">
+    <div class="section-label">Section 04</div>
+    <div class="section-title">Solution Architecture</div>
+    <div class="prose" style="margin-bottom: 1.25rem;">
+      <p>GLWAS's architecture challenge is a classic hub-and-spoke integration problem: multiple operational backends — ERPs, fleet and route systems, WMS, compliance systems, EDI feeds — need to deliver consistent, real-time data to a central intelligence layer composed of Salesforce (engagement and CRM), Tableau (analytics and supplier reporting), and a compliance reporting function. MuleSoft's three-layer API architecture solves this without requiring any backend system to be replaced — each operational system is wrapped in a System API, cross-system business logic runs in Process APIs, and Salesforce and Tableau receive clean, governed data through Experience APIs. The architecture absorbs future acquisitions at the System API layer, meaning each new company GLWAS acquires adds one integration rather than N custom connections.</p>
+    </div>
+
+    <div class="arch-layer">
+      <div class="arch-layer-title">System APIs — Operational Backend Layer</div>
+      <div class="arch-layer-sub">Each legacy system wrapped independently; no ERP replacement required; acquisition integrations absorbed here</div>
+      <div class="arch-systems">
+        <span class="arch-chip">ERP Instance(s) — Post-Acquisition</span>
+        <span class="arch-chip">Route / Fleet Management System</span>
+        <span class="arch-chip">Warehouse Management System(s)</span>
+        <span class="arch-chip">EDI Layer (17,000 retailer feeds)</span>
+        <span class="arch-chip">Supplier VIP / Depletion Reporting System</span>
+        <span class="arch-chip">Michigan LCC Compliance Data</span>
+        <span class="arch-chip">DOT Fleet Compliance System</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">Process APIs — Business Logic &amp; Normalization Layer</div>
+      <div class="arch-layer-sub">Cross-ERP data normalization; depletion calculation; account enrichment; compliance status resolution</div>
+      <div class="arch-systems">
+        <span class="arch-chip">Unified Account Enrichment Assembler</span>
+        <span class="arch-chip">Depletion &amp; VIP Fund Calculator</span>
+        <span class="arch-chip">Post-Acquisition ERP Normalizer</span>
+        <span class="arch-chip">Michigan LCC Compliance Checker</span>
+        <span class="arch-chip">Route Completion &amp; Delivery Status Processor</span>
+        <span class="arch-chip">Promotional Calendar Sync Engine</span>
+      </div>
+    </div>
+    <div class="arch-layer">
+      <div class="arch-layer-title">Experience APIs — Consumer Layer</div>
+      <div class="arch-layer-sub">Right data to the right surface — Salesforce rep desktop, Tableau supplier dashboards, compliance reporting</div>
+      <div class="arch-systems">
+        <span class="arch-chip">Salesforce Consumer Goods Cloud Account Feed</span>
+        <span class="arch-chip">Tableau Depletion &amp; Category Management Feed</span>
+        <span class="arch-chip">Supplier Portal Depletion Report API</span>
+        <span class="arch-chip">Michigan LCC Compliance Submission API</span>
+        <span class="arch-chip">Rep Mobile Order Capture Context API</span>
+        <span class="arch-chip">Sales Management Analytics Feed</span>
+      </div>
+    </div>
+
+    <div class="prose" style="margin-top: 1.25rem;">
+      <p>Anypoint Platform capabilities most relevant to GLWAS include: Runtime Manager for centralized monitoring across a geographically distributed operation serving 17,000 accounts from multiple facilities; MuleSoft's EDI capabilities for modernizing the retailer EDI layer without requiring retailer-side changes; API Manager for governing the supplier-facing depletion reporting APIs with proper authentication and rate limiting; and MuleSoft Accelerators for Consumer Goods, which provide pre-built integration templates for distributor route management, order capture, and promotional fund management use cases directly applicable to GLWAS's workflow.</p>
+    </div>
+
+    <div class="flag flag-info">
+      <strong>Architecture Note:</strong> The most important architectural fact for GLWAS is that MuleSoft can unify the data picture across post-acquisition ERPs without requiring consolidation. For a family-owned business that has grown through nine acquisitions over decades, ERP consolidation is a politically and operationally complex undertaking that the Co-CEO governance structure will approach with appropriate caution. MuleSoft's System API pattern delivers the unified data view that Finance, Sales, and Operations need — without touching the ERPs. That non-disruptive framing is the architectural argument that will resonate with Syd Ross, Lew Cooper, and the technology leadership whose first question will be "what does this break."
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 05 -->
+  <div class="section">
+    <div class="section-label">Section 05</div>
+    <div class="section-title">Revenue Model</div>
+    <div class="rev-wrap">
+      <table class="rev-table">
+        <thead>
+          <tr>
+            <th style="width:30%">Initiative</th>
+            <th style="width:13%">Status</th>
+            <th style="width:33%">MuleSoft + Tableau Role</th>
+            <th style="width:24%">ARR Range</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tableau Cloud Renewal (existing)</td>
+            <td><span class="status-pill s-pipeline">Renewing Apr 27</span></td>
+            <td>Existing $34,748 ACV — anchor for platform expansion conversation</td>
+            <td>$34,748 (renewal)</td>
+          </tr>
+          <tr>
+            <td>Supplier Depletion &amp; VIP Fund Automation</td>
+            <td><span class="status-pill s-pipeline">In Pipeline</span></td>
+            <td>Multi-ERP depletion System APIs; VIP fund Process API; supplier portal Experience API; Tableau category management feed</td>
+            <td>$160K – $220K</td>
+          </tr>
+          <tr>
+            <td>Salesforce + ERP Rep Intelligence</td>
+            <td><span class="status-pill s-scoping">Scoping</span></td>
+            <td>ERP + WMS + route data to Consumer Goods Cloud; account enrichment; promotional calendar sync</td>
+            <td>$140K – $190K</td>
+          </tr>
+          <tr>
+            <td>Tableau Data Foundation (API-governed feeds)</td>
+            <td><span class="status-pill s-scoping">Scoping</span></td>
+            <td>Replace SFTP/manual Tableau sources with governed MuleSoft APIs; all critical dashboards on real-time feeds</td>
+            <td>$80K – $120K</td>
+          </tr>
+          <tr>
+            <td>Post-Acquisition ERP Normalization Layer</td>
+            <td><span class="status-pill s-eval">Evaluating</span></td>
+            <td>Cross-ERP System APIs; unified order and account normalization; acquisition-ready architecture</td>
+            <td>$120K – $160K</td>
+          </tr>
+          <tr>
+            <td>Michigan LCC Compliance Automation</td>
+            <td><span class="status-pill s-eval">Evaluating</span></td>
+            <td>LCC licensee status API; compliance reporting automation; Salesforce pre-delivery compliance check</td>
+            <td>$60K – $90K</td>
+          </tr>
+          <tr class="total-row">
+            <td>Total Pipeline ARR Range (ex. Tableau renewal)</td>
+            <td></td>
+            <td></td>
+            <td>$560K – $780K</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flag flag-warn">
+      <strong>⚠ Budget Framing — Supplier Margin Protection Is the Financial Argument:</strong> GLWAS's Co-CEO leadership will evaluate technology investment against one primary metric: does it protect or grow the margin contribution that funds a family business across generations. The depletion reporting and VIP fund automation use case has the most direct and defensible financial argument — VIP fund disputes and reporting errors cost GLWAS real money, and automating the process eliminates that exposure while improving the supplier relationship quality that drives future fund allocations. Lead with that argument. The Tableau renewal conversation is the entry point; the VIP fund automation is the financial justification that moves the budget conversation from license maintenance to strategic investment.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 06 -->
+  <div class="section">
+    <div class="section-label">Section 06</div>
+    <div class="section-title">Proof Points</div>
+
+    <div class="proof-card">
+      <div class="proof-label">Proof Point 1 — Reference Customer Parallel</div>
+      <div class="proof-title">Republic National Distributing Company &amp; the Independent Distributor Data Modernization Pattern</div>
+      <div class="proof-body">Republic National Distributing Company — one of the largest independent wine and spirits distributors in the United States — faced GLWAS's exact architectural challenge at a larger scale: multiple state markets, multiple post-acquisition ERPs, weekly supplier depletion reporting to hundreds of brand partners, and a Salesforce CRM that lacked the operational data integration to support its field sales force effectively. The pattern is identical at GLWAS's scale: the supplier reporting function was the highest-value integration entry point because it had the clearest and most direct commercial consequence — VIP fund accuracy. MuleSoft's work with consumer goods distributors operating in regulated multi-tier distribution environments demonstrates the precise architecture GLWAS needs: EDI modernization at the retailer interface, ERP System APIs for depletion data normalization, and Tableau-connected supplier reporting dashboards that replace manual weekly report assembly. The Michigan three-tier context adds regulatory complexity that MuleSoft's compliance API patterns handle directly. GLWAS's scale — $437M, 17,000 accounts — is well within the range of distributor implementations where this architecture delivers measurable ROI within the first annual review cycle.</div>
+      <div class="anchor-quote">"The account team can use in conversation: 'The independent distributors that have won supplier partnerships against Southern Glazer's on data quality and reporting speed all made the same integration investment. MuleSoft is the infrastructure — Tableau is what the supplier sees. Together they give GLWAS the reporting capability that national distributors have and independent distributors rarely build.'"</div>
+    </div>
+
+    <div class="proof-card">
+      <div class="proof-label">Proof Point 2 — Competitive Defense: Manual Processes vs. MuleSoft</div>
+      <div class="proof-title">Why Integration Debt Compounds in a Route-Based Distribution Business</div>
+      <div class="proof-body">GLWAS's IT function will consider whether the supplier depletion reporting and ERP integration requirements can be addressed through enhanced manual processes, custom scripts, or point-to-point database connections. The counterargument is specific to GLWAS's operating model: a route-based distributor running 17,000 accounts through multiple post-acquisition ERPs generates data that changes daily — new orders, new deliveries, new promotional activations, new licensee compliance events. Custom integration logic written to connect one ERP's order table to a Tableau dashboard today requires rewriting when the ERP is upgraded, when a new acquisition adds a new system, or when a supplier changes its depletion reporting format. At nine acquisitions over GLWAS's history, the integration debt from custom point-to-point connections has already accumulated. MuleSoft's System API pattern means each ERP, each fleet system, and each new acquisition adds one API connection that the entire platform can reuse — not a new custom integration that only serves one consuming system and breaks independently when its source changes. For a family business that plans to grow through additional acquisitions, the architecture argument is as much about future acquisitions as it is about current operations.</div>
+    </div>
+
+    <div class="proof-card">
+      <div class="proof-label">Proof Point 3 — Timing / Forcing Function Argument</div>
+      <div class="proof-title">The Tableau Renewal Is the Entry Point — and It Closes in Five Days</div>
+      <div class="proof-body">The April 27 Tableau Cloud renewal at $34,748 is auto-renewing in five days. If it auto-renews without a strategic conversation, it closes as a maintenance transaction — and the next natural opportunity to discuss the platform's underutilization and the MuleSoft integration opportunity that addresses it is a full year away. The internal forensics review has already confirmed Tableau underutilization. Danielle Nadeau received renewal outreach in February. GLWAS is attending Tableau Conference on May 5. The commercial window where the underutilization finding, the renewal event, and the conference attendance all converge simultaneously is the next five days. The account team's task is not to close MuleSoft this week — it is to use the renewal conversation to open a strategic platform discussion that positions MuleSoft as the data foundation before the conference, so that what GLWAS sees at Tableau Conference reinforces the architecture story the account team has already told rather than arriving without context. Letting the renewal auto-close without that conversation is the only outcome that guarantees this account remains a Tableau maintenance relationship for another year.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 07 -->
+  <div class="section">
+    <div class="section-label">Section 07</div>
+    <div class="section-title">Target Contacts</div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar">DN</div>
+        <div>
+          <div class="contact-role-badge">Primary Contact — Confirmed</div>
+          <div class="contact-name">Danielle Nadeau — Director of Trade Development</div>
+          <div class="contact-title-line">Director of Trade Development · Renewal outreach recipient Feb 23 · Tableau Conference attendee</div>
+        </div>
+      </div>
+      <div class="contact-body">Danielle Nadeau is the confirmed point of contact for the Tableau renewal and is attending Tableau Conference May 5–7. Her Trade Development role sits at the intersection of supplier relationships and the analytics capability that MuleSoft + Tableau enables most directly — depletion reporting, VIP fund management, and category management dashboards that GLWAS presents to supplier partners. She is the most immediately accessible contact and the natural champion for the supplier intelligence use cases. The renewal conversation is already opened; the account team's task is to reframe it from a license maintenance call into a capability discussion before April 27.</div>
+      <div class="contact-question">"You're attending Tableau Conference next week — as you're thinking about where Tableau can deliver more value for GLWAS's supplier relationships and trade development work, what are the specific reporting or analytics capabilities your supplier partners are asking for that you're not fully able to deliver today?"</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar">ES</div>
+        <div>
+          <div class="contact-role-badge">Executive Sponsor</div>
+          <div class="contact-name">Syd Ross — Co-CEO</div>
+          <div class="contact-title-line">Co-CEO, Great Lakes Wines &amp; Spirits · Ross family ownership line</div>
+        </div>
+      </div>
+      <div class="contact-body">Syd Ross is one of two Co-CEOs and represents the Ross family ownership line in a dual-governance structure. Any enterprise technology investment of material size requires his alignment. His primary concerns will be competitive positioning against Southern Glazer's, protection of the supplier relationships that drive margin, and operational continuity for the 17,000-account route operation. The MuleSoft argument to Syd Ross is not a technology pitch — it is a competitive intelligence argument: GLWAS's ability to retain supplier partnerships as national distributors compete with data-driven reporting capabilities depends on the integration infrastructure that makes Tableau's supplier dashboards credible and current.</div>
+      <div class="contact-question">"When GLWAS is in a supplier review and Southern Glazer's is also in the room, what's the data and reporting capability story GLWAS tells — and is the depletion and category management reporting you're providing today at the level that locks in supplier preference over a national competitor's offering?"</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar">LC</div>
+        <div>
+          <div class="contact-role-badge">Executive Sponsor</div>
+          <div class="contact-name">Lew Cooper III — Co-CEO</div>
+          <div class="contact-title-line">Co-CEO, Great Lakes Wines &amp; Spirits · Cooper family ownership line</div>
+        </div>
+      </div>
+      <div class="contact-body">Lew Cooper III is the second Co-CEO representing the Cooper family ownership line. The dual-CEO structure means any major investment decision requires his alignment alongside Syd Ross — they are not interchangeable sponsors but parallel decision-makers whose buy-in is both required. Cooper's angle on the investment is likely operational: route productivity, order accuracy, compliance, and the workforce that executes the 17,000-account operation. The MuleSoft argument for Lew Cooper is the rep intelligence and compliance automation story — giving the field sales force better tools and reducing the regulatory overhead of the Michigan three-tier compliance function.</div>
+      <div class="contact-question">"With 17,000 licensed retail accounts to manage across your route network, how much of your sales reps' time is spent looking up order history and account status before a visit versus actually managing the customer relationship — and is the data they're working with when they walk into an account current enough to have a fully informed conversation?"</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-header">
+        <div class="contact-avatar">IT</div>
+        <div>
+          <div class="contact-role-badge">Technical Champion</div>
+          <div class="contact-name">Identity TBD — VP/Director of IT or Technology, GLWAS</div>
+          <div class="contact-title-line">Head of Technology / IT · Post-acquisition systems owner · ERP and integration landscape gatekeeper</div>
+        </div>
+      </div>
+      <div class="contact-body">GLWAS's technology leader owns the post-acquisition ERP landscape, the EDI integrations, and the fleet and WMS systems that are the MuleSoft integration targets. This person is acutely aware of the integration debt from nine acquisitions and the manual processes that fill the gaps between systems. They are the most likely internal champion for MuleSoft's non-disruptive integration approach and the person whose technical credibility is required before the Co-CEO decision-makers will approve an investment. Identifying this contact by name — through LinkedIn, trade press, or Danielle Nadeau's introduction — is the account team's second-most-urgent task after the renewal call.</div>
+      <div class="contact-question">"Across all the systems GLWAS has accumulated through acquisitions — the various ERPs, the route and fleet systems, the WMS, the EDI layer — what's the biggest data consistency challenge your team is managing manually today, and what would it mean operationally to have those systems share a single, consistent view of an account's order and service history?"</div>
+    </div>
+
+    <div class="flag flag-info">
+      <strong>Contact Research Priority:</strong> Danielle Nadeau is confirmed — contact her immediately before April 27 to reframe the renewal conversation. The Co-CEOs (Syd Ross, Lew Cooper III) are publicly named and likely LinkedIn-searchable; use trade press coverage (Michigan Distributor &amp; Supplier, Beverage Dynamics, Michigan Grocers Association events) to identify recent public statements before outreach. The IT lead is the most important unknown — ask Danielle Nadeau directly for an introduction to the technology leader as part of the renewal conversation, framing it as ensuring the platform discussion includes the right technical stakeholder. Prioritize Danielle first, IT lead second, Co-CEOs third.
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-label">Tableau Renewal</div>
+        <div class="metric-value">$34,748 · Apr 27 · 5 days</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Tableau Conference</div>
+        <div class="metric-value">May 5–7 · San Diego · Confirmed</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Retail Accounts</div>
+        <div class="metric-value">17,000 licensed licensees</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">MuleSoft Potential</div>
+        <div class="metric-value">$560K – $780K ARR</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 08 -->
+  <div class="section">
+    <div class="section-label">Section 08</div>
+    <div class="section-title">Next Steps</div>
+    <div class="step-list">
+
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Call Danielle Nadeau Today — Reframe the Renewal Before April 27</div>
+          <div class="step-body">The Tableau renewal auto-closes April 27. Adrian Garcia must contact Danielle Nadeau today or tomorrow — not with a renewal confirmation call, but with a conversation that opens with the underutilization finding and the question of what Tableau could be doing for GLWAS's supplier reporting and trade development work that it currently isn't. The goal of this call is not to close anything; it is to establish that the renewal conversation is actually a platform capability conversation, and to secure a meeting before or at Tableau Conference. Success is a scheduled conversation with Danielle that extends beyond the renewal transaction.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Schedule a Tableau Conference Meeting with Danielle Nadeau for May 5–7</div>
+          <div class="step-body">GLWAS is confirmed attending Tableau Conference in San Diego May 5–7. This is the highest-value in-person engagement opportunity in the near-term calendar and the natural setting to introduce the MuleSoft + Tableau combined story. Request a 30-minute meeting at the conference — ideally before the opening keynote so the platform vision GLWAS sees during the conference reinforces the conversation the account team has already had. Bring a one-page MuleSoft + Tableau architecture brief specific to beverage distribution. Success is a confirmed meeting slot at Tableau Conference with Danielle and ideally the technology lead.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Identify the IT / Technology Lead via Danielle's Introduction</div>
+          <div class="step-body">During the renewal call or at Tableau Conference, ask Danielle Nadeau directly for the name of the technology or IT lead who manages GLWAS's ERP and systems landscape. Frame the request as wanting to ensure the right technical stakeholder is part of the platform conversation — not as a sales escalation. The IT lead is the internal champion who will evaluate the MuleSoft integration architecture and build the business case for the Co-CEO decision-makers. Success is a named IT contact and a scheduled technical introduction call within two weeks of Tableau Conference.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Run a Discovery Session on Supplier Reporting and ERP Architecture</div>
+          <div class="step-body">Following the IT lead introduction, run a focused discovery session on two questions: how does GLWAS currently assemble and deliver weekly depletion reports to supplier partners, and what does the ERP landscape look like across the acquired entities. These two questions confirm or disconfirm the two highest-value MuleSoft use cases (supplier depletion automation and ERP normalization) and provide the specific operational context needed to build a credible proposal. Success is a discovery summary that confirms the manual depletion reporting process and maps the ERP landscape with enough specificity to scope Phase 1 implementation.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <div class="step-title">Deliver a Co-CEO-Ready Executive Brief Anchored in Supplier Competition</div>
+          <div class="step-body">Following discovery, prepare a one-page brief for Syd Ross and Lew Cooper III that frames the MuleSoft + Tableau investment in the language of competitive supplier relationships — specifically the capability gap between what GLWAS currently provides in supplier reviews and what Southern Glazer's offers at national scale. The brief should quantify the supplier reporting automation ROI (VIP fund accuracy, dispute risk reduction) and the Salesforce rep intelligence value (account coverage improvement, order capture efficiency). Bring the Tableau AE to the executive meeting to reinforce the combined platform story. Success is a meeting with both Co-CEOs and agreement to proceed to a scoping engagement.</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <div class="step-title">Scope and Close Phase 1: Supplier Depletion Automation as the Entry Point</div>
+          <div class="step-body">Phase 1 scope should be the supplier depletion and VIP fund automation use case — it has the clearest ROI, the most direct connection to GLWAS's competitive position, and the most contained technical scope of the five use cases. Define the Phase 1 proposal with a named implementation timeline, a go-live milestone (first fully automated depletion report delivered to a named supplier partner), and a success metric the Co-CEOs can evaluate within 90 days. Present Phase 2 (Salesforce rep intelligence) and Phase 3 (Tableau data foundation) as sequenced extensions that build on Phase 1's API layer. Success is a signed Phase 1 agreement before the end of Q2 2026.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flag flag-danger" style="margin-top: 1.5rem;">
+      <strong>Forcing Function — Five Days to Turn a Renewal into a Platform Conversation:</strong> The Tableau renewal auto-closes April 27. GLWAS attends Tableau Conference May 5. Both events happen in the next two weeks. If the renewal closes as a maintenance transaction without a strategic conversation, the MuleSoft opportunity does not disappear — but it loses its most natural commercial entry point and its most compelling timing argument. The account team's task this week is not to sell MuleSoft. It is to call Danielle Nadeau, acknowledge the underutilization finding, ask the right question about supplier reporting capability, and secure a Tableau Conference meeting. Everything else follows from that conversation. Do not let the renewal close silently.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
